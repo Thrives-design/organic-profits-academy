@@ -1,0 +1,30 @@
+node_modules
+dist
+.DS_Store
+
+# env
+.env
+.env.*
+!.env.example
+
+# local sqlite (legacy)
+data.db
+data.db-*
+*.sqlite
+*.sqlite-*
+
+# secrets
+deploy-secrets/
+
+# drizzle
+migrations/
+
+# IDE
+.vscode
+.idea
+
+# logs
+*.log
+
+# vercel
+.vercel
