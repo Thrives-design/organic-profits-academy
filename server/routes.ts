@@ -7,6 +7,7 @@ import {
   insertVideoSchema, insertProductSchema,
 } from "@shared/schema";
 import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
 function genToken() {
   return crypto.randomBytes(32).toString("hex");
@@ -76,7 +77,8 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
       const parsed = insertUserSchema.parse(req.body);
       const existing = await storage.getUserByEmail(parsed.email);
       if (existing) return res.status(400).json({ error: "Email already registered" });
-      const u = await storage.createUser(parsed);
+      const hashed = await bcrypt.hash(parsed.password, 10);
+      const u = await storage.createUser({ ...parsed, password: hashed });
       const token = genToken();
       await storage.createSession(token, u.id);
       res.json({ token, user: publicUser(u) });
@@ -90,7 +92,9 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
       const { email, password } = req.body ?? {};
       if (!email || !password) return res.status(400).json({ error: "Email and password required" });
       const u = await storage.getUserByEmail(email);
-      if (!u || u.password !== password) return res.status(401).json({ error: "Invalid credentials" });
+      if (!u) return res.status(401).json({ error: "Invalid credentials" });
+      const ok = await bcrypt.compare(password, u.password);
+      if (!ok) return res.status(401).json({ error: "Invalid credentials" });
       const token = genToken();
       await storage.createSession(token, u.id);
       res.json({ token, user: publicUser(u) });
@@ -139,7 +143,8 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
       if (user) {
         user = await storage.updateUser(user.id, { isMember: true, name });
       } else {
-        user = await storage.createUser({ name, email, password } as any);
+        const hashed = await bcrypt.hash(password, 10);
+        user = await storage.createUser({ name, email, password: hashed } as any);
         user = await storage.updateUser(user!.id, { isMember: true });
       }
       const nextCharge = cfg.installments > 1 ? new Date(Date.now() + 30 * 86400000).toISOString() : null;

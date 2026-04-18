@@ -1,4 +1,5 @@
 import "dotenv/config";
+import bcrypt from "bcryptjs";
 import { db } from "../server/db";
 import {
   users,
@@ -21,10 +22,13 @@ async function main() {
   console.log("Seeding Neon database...");
   const now = Date.now();
 
+  const adminHash = await bcrypt.hash("admin123", 10);
+  const demoHash = await bcrypt.hash("demo1234", 10);
+
   // ---- Admin ----
   await db.insert(users).values({
     email: "admin@organicprofits.com",
-    password: "admin123",
+    password: adminHash,
     name: "Admin",
     isMember: true,
     isAdmin: true,
@@ -35,7 +39,7 @@ async function main() {
     .insert(users)
     .values({
       email: "demo@organicprofits.com",
-      password: "demo1234",
+      password: demoHash,
       name: "Demo Member",
       isMember: true,
       isAdmin: false,
