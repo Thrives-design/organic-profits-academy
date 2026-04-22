@@ -330,28 +330,30 @@ export default function Landing() {
                         background: i === 0
                           ? "linear-gradient(160deg, hsl(207 54% 8%) 0%, hsl(207 50% 14%) 70%, hsl(40 28% 25%))"
                           : i === 1
-                          ? "linear-gradient(160deg, hsl(40 28% 35%) 0%, hsl(40 28% 55%) 70%, hsl(47 33% 94%))"
-                          : "linear-gradient(160deg, hsl(47 33% 94%) 0%, hsl(46 26% 80%) 70%, hsl(40 28% 55%))",
+                          ? "linear-gradient(160deg, hsl(40 28% 30%) 0%, hsl(40 28% 45%) 70%, hsl(40 28% 60%))"
+                          : "linear-gradient(160deg, hsl(207 54% 14%) 0%, hsl(207 45% 22%) 60%, hsl(40 28% 40%))",
                       }}
                     />
                     {/* subtle chart overlay */}
                     <svg className="absolute inset-0 h-full w-full opacity-15" viewBox="0 0 400 500" fill="none" aria-hidden>
-                      <path d="M0,400 L60,360 L120,380 L180,320 L240,340 L300,260 L360,290 L400,240" stroke={i === 2 ? "hsl(207 54% 10%)" : "hsl(47 33% 94%)"} strokeWidth="1" />
-                      <path d="M0,430 L70,400 L140,420 L210,360 L280,380 L360,320 L400,340" stroke={i === 2 ? "hsl(207 54% 10%)" : "hsl(47 33% 94%)"} strokeWidth="1" opacity="0.55" />
+                      <path d="M0,400 L60,360 L120,380 L180,320 L240,340 L300,260 L360,290 L400,240" stroke="hsl(47 33% 94%)" strokeWidth="1" />
+                      <path d="M0,430 L70,400 L140,420 L210,360 L280,380 L360,320 L400,340" stroke="hsl(47 33% 94%)" strokeWidth="1" opacity="0.55" />
                     </svg>
+                    {/* dark scrim for consistent text contrast */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
                     {/* number top-left */}
-                    <div className={`absolute top-8 left-8 serif text-[5rem] leading-none ${i === 2 ? "text-[hsl(207_54%_10%)]" : "text-[hsl(47_33%_94%)]"} opacity-85`} style={{ fontWeight: 300 }}>
+                    <div className="absolute top-8 left-8 serif text-[5rem] leading-none text-[hsl(47_33%_94%)] opacity-90" style={{ fontWeight: 300 }}>
                       {m.n}
                     </div>
                     {/* content bottom */}
                     <div className="absolute bottom-0 left-0 right-0 p-8">
-                      <h3 className={`serif text-3xl md:text-4xl ${i === 2 ? "text-[hsl(207_54%_10%)]" : "text-[hsl(47_33%_94%)]"}`}>
+                      <h3 className="serif text-3xl md:text-4xl text-[hsl(47_33%_94%)]">
                         {m.name}
                       </h3>
-                      <p className={`mt-3 text-sm leading-relaxed max-w-xs ${i === 2 ? "text-[hsl(207_54%_10%)]/85" : "text-[hsl(47_33%_94%)]/85"}`}>
+                      <p className="mt-3 text-sm leading-relaxed max-w-xs text-[hsl(47_33%_94%)]/90">
                         {m.desc}
                       </p>
-                      <div className={`mt-6 inline-flex items-center gap-2 eyebrow ${i === 2 ? "text-[hsl(207_54%_10%)]" : "text-[hsl(40_28%_75%)]"}`}>
+                      <div className="mt-6 inline-flex items-center gap-2 eyebrow text-[hsl(40_28%_80%)]">
                         Explore track <ArrowRight size={12} />
                       </div>
                     </div>
