@@ -119,7 +119,7 @@ function VideosTab() {
                 <div><Label>Niche</Label>
                   <Select value={form.niche} onValueChange={(v) => setForm({ ...form, niche: v })}>
                     <SelectTrigger data-testid="select-video-niche"><SelectValue /></SelectTrigger>
-                    <SelectContent>{["crypto", "futures", "options", "forex"].map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}</SelectContent>
+                    <SelectContent>{["crypto", "forex", "options"].map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div><Label>Level</Label>

@@ -1,383 +1,610 @@
+import { useRef, useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Layout } from "@/components/Layout";
-import { Logo, WordMark } from "@/components/Logo";
+import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
-import { NicheBadge, NICHE_META } from "@/components/NicheBadge";
-import { VideoThumbnail } from "@/components/VideoThumbnail";
-import {
-  PlayCircle, Users, Video, Shirt, ArrowRight, Bitcoin, TrendingUp, Target, Globe, Check,
-} from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const FEATURED = [
-  { name: "TradingView" }, { name: "CoinDesk" }, { name: "Benzinga" }, { name: "Bloomberg" }, { name: "MarketWatch" },
+const MARKETS = [
+  {
+    n: "01",
+    key: "crypto",
+    name: "Crypto Trading",
+    desc: "Spot, perpetuals, and on-chain flow. Liquidity-driven setups across BTC, ETH, and major alts.",
+  },
+  {
+    n: "02",
+    key: "forex",
+    name: "Forex",
+    desc: "London and New York sessions, macro flows, and smart-money concepts applied to the majors.",
+  },
+  {
+    n: "03",
+    key: "options",
+    name: "Options",
+    desc: "0DTE spreads to LEAPS. Greeks, volatility, and premium selling with defined risk.",
+  },
 ];
 
-const SAMPLE_COURSES = [
-  { title: "Market Structure 101", niche: "crypto", locked: false },
-  { title: "ES Opening Range Breakout", niche: "futures", locked: true },
-  { title: "0DTE SPX: Iron Condors", niche: "options", locked: true },
-  { title: "EUR/USD London Session", niche: "forex", locked: true },
-  { title: "Risk Management Masterclass", niche: "futures", locked: true },
-  { title: "Reading Volume Profile", niche: "futures", locked: true },
+const CURRICULUM = [
+  { n: "01", total: "24", title: "Market Structure 101", niche: "Crypto" },
+  { n: "02", total: "24", title: "The Greeks for Directional Traders", niche: "Options" },
+  { n: "03", total: "24", title: "EUR/USD London Session Playbook", niche: "Forex" },
+  { n: "04", total: "24", title: "BTC Liquidity Sweeps & Order Blocks", niche: "Crypto" },
+  { n: "05", total: "24", title: "Selling Premium in High IV Environments", niche: "Options" },
+  { n: "06", total: "24", title: "Smart Money Concepts in FX", niche: "Forex" },
+  { n: "07", total: "24", title: "LEAPS: Long-Dated Calls", niche: "Options" },
+  { n: "08", total: "24", title: "On-Chain Flow for Swing Trades", niche: "Crypto" },
 ];
 
 const TESTIMONIALS = [
-  { name: "Jordan H.", city: "Chicago, IL", body: "I'd bounced between Discord servers for two years. The Academy is the first place I've felt treated like a professional — clear curriculum, real practitioners." },
-  { name: "Priya K.", city: "Austin, TX", body: "I came in for options and stayed for the community. My 0DTE risk framework got tighter in two weeks than it did in the prior year on my own." },
-  { name: "Marcus T.", city: "Toronto, ON", body: "Paid for my lifetime membership in my first full month back on a funded account. The risk discipline alone is worth it." },
+  {
+    body: "I'd bounced between Discord servers for two years. The Academy is the first place I've felt treated like a professional — clear curriculum, real practitioners.",
+    name: "Jordan H.",
+    city: "Chicago, IL",
+  },
+  {
+    body: "I came in for options and stayed for the community. My 0DTE risk framework got tighter in two weeks than it did in the prior year on my own.",
+    name: "Priya K.",
+    city: "Austin, TX",
+  },
+  {
+    body: "Paid for my lifetime membership in my first full month back on a funded account. The risk discipline alone is worth it.",
+    name: "Marcus T.",
+    city: "Toronto, ON",
+  },
 ];
 
 const FAQ = [
   { q: "Do you offer refunds?", a: "Yes — 14-day money back, no questions asked. After 14 days your lifetime access is non-refundable because you retain perpetual access to all content." },
   { q: "Is financing available?", a: "Yes. You can choose 2-, 3-, or 4-month installment plans at checkout, all totaling $1,100. No interest, no credit check. Payments are split evenly on the same day each month." },
-  { q: "Is this for beginners?", a: "Yes. We have beginner-tagged curriculum for all four markets, plus a structured onboarding path that starts with Market Structure 101 and Risk Management." },
+  { q: "Is this for beginners?", a: "Yes. We have beginner-tagged curriculum for all three markets, plus a structured onboarding path that starts with Market Structure 101 and Risk Management." },
   { q: "How long do I have access?", a: "Lifetime. One payment unlocks everything forever: the library, live webinars, the community, and every future addition we build." },
   { q: "When are live sessions?", a: "Weekdays at 9:15am CT (pre-market desk), weekly market open playbooks on Monday, and at least one niche deep-dive per week. Replays are archived in the library." },
   { q: "How fast does merch ship?", a: "Orders ship within 3 business days from our US warehouse. Standard shipping is 4-6 business days in North America, 7-14 internationally." },
 ];
 
+function HeroAmbient() {
+  // Soft diagonal rising lines at 5% opacity. Slow. No parallax.
+  const lines = Array.from({ length: 14 }).map((_, i) => ({
+    left: (i * 7.7) % 100,
+    delay: i * 1.6,
+    dur: 18 + (i % 5) * 2,
+    h: 60 + (i % 4) * 40,
+  }));
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+      {lines.map((l, i) => (
+        <span
+          key={i}
+          className="ambient-line absolute bottom-0"
+          style={{
+            left: `${l.left}%`,
+            width: "1px",
+            height: `${l.h}px`,
+            background: "linear-gradient(to top, transparent, hsl(var(--accent) / 0.5), transparent)",
+            animationDelay: `${l.delay}s`,
+            animationDuration: `${l.dur}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Testimonials() {
+  const [i, setI] = useState(0);
+  const t = TESTIMONIALS[i];
+  const next = () => setI((v) => (v + 1) % TESTIMONIALS.length);
+  const prev = () => setI((v) => (v - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+  return (
+    <div className="mx-auto max-w-4xl px-6 text-center">
+      <blockquote key={i} className="fade-up serif italic text-3xl md:text-4xl lg:text-5xl leading-[1.15] tracking-tight text-foreground/90">
+        &ldquo;{t.body}&rdquo;
+      </blockquote>
+      <div className="mt-10 eyebrow text-accent">
+        {t.name} &nbsp;·&nbsp; {t.city}
+      </div>
+      <div className="mt-10 flex items-center justify-center gap-6">
+        <button
+          onClick={prev}
+          className="p-2 text-muted-foreground hover:text-accent transition-colors"
+          aria-label="Previous testimonial"
+          data-testid="testimonial-prev"
+        >
+          <ChevronLeft size={18} strokeWidth={1.5} />
+        </button>
+        <div className="flex gap-2">
+          {TESTIMONIALS.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setI(idx)}
+              className={`h-1 transition-all ${idx === i ? "w-8 bg-accent" : "w-4 bg-border"}`}
+              aria-label={`Testimonial ${idx + 1}`}
+              data-testid={`testimonial-dot-${idx}`}
+            />
+          ))}
+        </div>
+        <button
+          onClick={next}
+          className="p-2 text-muted-foreground hover:text-accent transition-colors"
+          aria-label="Next testimonial"
+          data-testid="testimonial-next"
+        >
+          <ChevronRight size={18} strokeWidth={1.5} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CurriculumRow() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(true);
+  const update = () => {
+    const el = ref.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 10);
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
+  };
+  useEffect(() => {
+    update();
+    const el = ref.current;
+    if (!el) return;
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+  const scroll = (dir: 1 | -1) => ref.current?.scrollBy({ left: dir * 400, behavior: "smooth" });
+
+  // tall editorial gradient thumbnails
+  const grads = [
+    "linear-gradient(135deg, hsl(207 54% 10%), hsl(207 54% 16%) 60%, hsl(40 28% 30%))",
+    "linear-gradient(135deg, hsl(47 33% 94%), hsl(46 26% 86%) 60%, hsl(40 28% 70%))",
+    "linear-gradient(135deg, hsl(40 28% 55%), hsl(40 28% 35%) 60%, hsl(207 54% 10%))",
+    "linear-gradient(135deg, hsl(207 54% 10%), hsl(40 28% 25%))",
+  ];
+
+  return (
+    <div className="relative">
+      <div
+        ref={ref}
+        className="scroll-x-snap flex gap-6 overflow-x-auto pb-8 -mx-6 px-6 lg:-mx-10 lg:px-10"
+        data-testid="curriculum-scroll"
+      >
+        {CURRICULUM.map((c, idx) => (
+          <Link key={c.title} href="/library" data-testid={`curriculum-card-${idx}`}>
+            <a className="group shrink-0 block w-[260px] md:w-[300px]">
+              <div
+                className="relative aspect-[3/4] overflow-hidden border border-border/60 transition-all duration-500 group-hover:border-accent/60"
+                style={{ background: grads[idx % grads.length] }}
+              >
+                {/* subtle abstract chart lines overlay */}
+                <svg className="absolute inset-0 h-full w-full opacity-20" viewBox="0 0 300 400" fill="none">
+                  <path d="M0,300 L40,260 L80,280 L120,220 L160,240 L200,180 L240,200 L300,140" stroke="hsl(40 28% 85%)" strokeWidth="1" fill="none" />
+                  <path d="M0,340 L50,310 L100,320 L150,270 L200,290 L260,230 L300,250" stroke="hsl(40 28% 85%)" strokeWidth="1" fill="none" opacity="0.6" />
+                </svg>
+                <div className="absolute top-5 left-5 eyebrow text-[hsl(47_33%_94%)]">
+                  {c.n} / {c.total}
+                </div>
+                <div className="absolute bottom-5 left-5 right-5">
+                  <div className="eyebrow-subtle text-[hsl(47_33%_94%)] opacity-70 mb-2">{c.niche}</div>
+                  <div className="serif text-[hsl(47_33%_94%)] text-xl leading-tight">{c.title}</div>
+                </div>
+              </div>
+            </a>
+          </Link>
+        ))}
+      </div>
+      {canLeft && (
+        <button onClick={() => scroll(-1)} className="absolute left-2 top-[45%] hidden md:flex h-10 w-10 items-center justify-center border border-accent/40 bg-background/90 text-accent hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Scroll left" data-testid="curriculum-prev">
+          <ChevronLeft size={18} strokeWidth={1.5} />
+        </button>
+      )}
+      {canRight && (
+        <button onClick={() => scroll(1)} className="absolute right-2 top-[45%] hidden md:flex h-10 w-10 items-center justify-center border border-accent/40 bg-background/90 text-accent hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Scroll right" data-testid="curriculum-next">
+          <ChevronRight size={18} strokeWidth={1.5} />
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function Landing() {
   return (
     <Layout>
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        {/* Animated candle particles */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          {Array.from({ length: 14 }).map((_, i) => {
-            const left = (i * 7.3) % 100;
-            const delay = i * 0.9;
-            const hue = i % 2 === 0 ? "89 48% 46%" : "40 28% 55%";
-            const up = i % 3 === 0;
-            return (
-              <span
-                key={i}
-                className="candle-particle absolute bottom-0 block rounded-sm"
-                style={{
-                  left: `${left}%`,
-                  width: "3px",
-                  height: `${20 + (i % 4) * 12}px`,
-                  background: `hsl(${hue} / ${up ? 0.35 : 0.20})`,
-                  animationDelay: `${delay}s`,
-                  animationDuration: `${10 + (i % 5) * 2}s`,
-                }}
-              />
-            );
-          })}
-        </div>
-
-        <div className="mx-auto max-w-7xl px-6 pt-16 pb-20 lg:px-8 lg:pt-24 lg:pb-28">
-          <div className="grid items-center gap-12 lg:grid-cols-12">
-            <div className="lg:col-span-7 fade-up">
-              <div className="eyebrow mb-5">A TRADING ACADEMY · EST. 2024</div>
-              <h1 className="serif text-[2.5rem] leading-[1.05] tracking-tight md:text-[3.75rem] lg:text-[4.25rem]">
-                Grow your trading.{" "}
-                <span className="italic" style={{ color: "hsl(var(--accent))" }}>Cultivate</span> real profits.
+      {/* ==================== HERO — 100vh, full-bleed ==================== */}
+      <section className="relative min-h-[100svh] flex items-center overflow-hidden" data-testid="section-hero">
+        <HeroAmbient />
+        <div className="relative mx-auto w-full max-w-7xl px-6 lg:px-10 py-16 lg:py-24">
+          <div className="grid items-center gap-10 lg:grid-cols-12">
+            {/* Left column — 40% */}
+            <div className="lg:col-span-5 fade-up">
+              <p className="eyebrow mb-8 text-accent">EST. 2026 — Houston, TX</p>
+              <h1 className="display-hero">
+                <span className="italic opacity-90 block">Grow your</span>
+                <span className="block" style={{ fontWeight: 500 }}>trading.</span>
+                <span className="block italic text-accent text-[0.6em] leading-none mt-4">Cultivate profits.</span>
               </h1>
-              <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-                A premium academy for serious operators. Live desk sessions, an on-demand library, a private community, and a disciplined curriculum across crypto, futures, options, and forex.
+              <p className="mt-10 max-w-md text-[15px] leading-relaxed text-muted-foreground">
+                A members' house for disciplined operators. Live desk sessions, an editorial library, and a private community across crypto, forex, and options.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
+              <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Link href="/pricing" data-testid="link-hero-join">
-                  <Button size="lg" className="bg-primary text-primary-foreground hover:opacity-90 h-12 px-6 text-[15px] font-medium">
-                    Become a Member <ArrowRight size={16} className="ml-1" />
+                  <Button size="lg" className="bg-primary text-primary-foreground h-12 px-8 rounded-none mono uppercase tracking-widest-editorial text-[11px] font-medium hover:bg-[hsl(89_48%_46%)] hover:text-[hsl(207_54%_8%)] transition-colors">
+                    Become a Member
                   </Button>
                 </Link>
-                <Link href="/library" data-testid="link-hero-preview">
-                  <Button variant="outline" size="lg" className="h-12 px-6 text-[15px] font-medium border-accent/40 hover:bg-accent/10">
-                    <PlayCircle size={16} className="mr-1" />
-                    Watch Free Preview
+                <Link href="/academy" data-testid="link-hero-preview">
+                  <Button variant="outline" size="lg" className="h-12 px-8 rounded-none border border-accent/60 bg-transparent hover:bg-accent/10 mono uppercase tracking-widest-editorial text-[11px] font-medium text-foreground">
+                    View the Academy
                   </Button>
                 </Link>
               </div>
-              <div className="mt-8 flex flex-wrap items-center gap-2">
-                {(["crypto", "futures", "options", "forex"] as const).map((n) => (
-                  <NicheBadge key={n} niche={n} size="md" />
+            </div>
+
+            {/* Right column — 60% — logo mark large, subtle */}
+            <div className="lg:col-span-7 hidden lg:flex justify-center items-center">
+              <div className="relative aspect-square w-full max-w-[520px] flex items-center justify-center">
+                {/* concentric gold hairline rings */}
+                <div className="absolute inset-6 border border-accent/15" />
+                <div className="absolute inset-20 border border-accent/10" />
+                <div className="absolute inset-36 border border-accent/8" />
+                <div className="relative z-10 opacity-90">
+                  <Logo size={240} className="!rounded-full" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Niche strip at bottom of hero */}
+        <div className="absolute bottom-0 left-0 right-0 hairline-top py-6 px-6 lg:px-10">
+          <div className="mx-auto max-w-7xl flex items-center justify-center gap-6 md:gap-12 eyebrow flex-wrap">
+            <span>Crypto Trading</span>
+            <span className="text-accent/40">—</span>
+            <span>Forex</span>
+            <span className="text-accent/40">—</span>
+            <span>Options</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== MANIFESTO ==================== */}
+      <section className="py-32 lg:py-40" data-testid="section-manifesto">
+        <div className="mx-auto max-w-5xl px-6 lg:px-10">
+          <Reveal>
+            <div className="lg:grid lg:grid-cols-12 lg:gap-12">
+              <div className="lg:col-span-3">
+                <p className="eyebrow mb-6">01 — The Manifesto</p>
+              </div>
+              <div className="lg:col-span-9">
+                <p className="serif italic text-3xl md:text-4xl lg:text-[2.75rem] leading-[1.25] tracking-tight text-foreground/90">
+                  We don't chase green candles. We build systems, develop intuition, and trade with the discipline of craftspeople. Organic Profits Academy is a members' house for serious traders across crypto, forex, and options — a place to practice, refine, and stay sharp.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <div className="hairline" />
+
+      {/* ==================== THE 3 MARKETS ==================== */}
+      <section className="py-32" data-testid="section-markets">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <Reveal>
+            <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-20">
+              <div className="lg:col-span-4">
+                <p className="eyebrow mb-6">02 — The 3 Markets</p>
+              </div>
+              <div className="lg:col-span-8">
+                <h2 className="display-xl serif">
+                  Three markets.<br />
+                  <span className="italic">One standard.</span>
+                </h2>
+                <p className="mt-6 max-w-md text-muted-foreground text-[15px] leading-relaxed">
+                  Each track is a complete curriculum — first principles through advanced, desk-grade tactics.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="grid gap-1 md:grid-cols-3">
+            {MARKETS.map((m, i) => (
+              <Reveal key={m.key} delay={i * 80}>
+                <Link href="/library">
+                  <a className="group relative block overflow-hidden aspect-[3/4] md:aspect-[4/5] border border-border/60 transition-all duration-500 hover:border-accent/60" data-testid={`market-${m.key}`}>
+                    {/* gradient placeholder */}
+                    <div
+                      className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.03]"
+                      style={{
+                        background: i === 0
+                          ? "linear-gradient(160deg, hsl(207 54% 8%) 0%, hsl(207 50% 14%) 70%, hsl(40 28% 25%))"
+                          : i === 1
+                          ? "linear-gradient(160deg, hsl(40 28% 35%) 0%, hsl(40 28% 55%) 70%, hsl(47 33% 94%))"
+                          : "linear-gradient(160deg, hsl(47 33% 94%) 0%, hsl(46 26% 80%) 70%, hsl(40 28% 55%))",
+                      }}
+                    />
+                    {/* subtle chart overlay */}
+                    <svg className="absolute inset-0 h-full w-full opacity-15" viewBox="0 0 400 500" fill="none" aria-hidden>
+                      <path d="M0,400 L60,360 L120,380 L180,320 L240,340 L300,260 L360,290 L400,240" stroke={i === 2 ? "hsl(207 54% 10%)" : "hsl(47 33% 94%)"} strokeWidth="1" />
+                      <path d="M0,430 L70,400 L140,420 L210,360 L280,380 L360,320 L400,340" stroke={i === 2 ? "hsl(207 54% 10%)" : "hsl(47 33% 94%)"} strokeWidth="1" opacity="0.55" />
+                    </svg>
+                    {/* number top-left */}
+                    <div className={`absolute top-8 left-8 serif text-[5rem] leading-none ${i === 2 ? "text-[hsl(207_54%_10%)]" : "text-[hsl(47_33%_94%)]"} opacity-85`} style={{ fontWeight: 300 }}>
+                      {m.n}
+                    </div>
+                    {/* content bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 p-8">
+                      <h3 className={`serif text-3xl md:text-4xl ${i === 2 ? "text-[hsl(207_54%_10%)]" : "text-[hsl(47_33%_94%)]"}`}>
+                        {m.name}
+                      </h3>
+                      <p className={`mt-3 text-sm leading-relaxed max-w-xs ${i === 2 ? "text-[hsl(207_54%_10%)]/85" : "text-[hsl(47_33%_94%)]/85"}`}>
+                        {m.desc}
+                      </p>
+                      <div className={`mt-6 inline-flex items-center gap-2 eyebrow ${i === 2 ? "text-[hsl(207_54%_10%)]" : "text-[hsl(40_28%_75%)]"}`}>
+                        Explore track <ArrowRight size={12} />
+                      </div>
+                    </div>
+                  </a>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="hairline" />
+
+      {/* ==================== CURRICULUM PREVIEW — horizontal scroll ==================== */}
+      <section className="py-32" data-testid="section-curriculum">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <Reveal>
+            <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-16">
+              <div className="lg:col-span-4">
+                <p className="eyebrow mb-6">03 — Curriculum Preview</p>
+              </div>
+              <div className="lg:col-span-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                <h2 className="display-xl serif">
+                  A small taste of<br />
+                  <span className="italic">what's inside.</span>
+                </h2>
+                <Link href="/pricing" data-testid="link-curriculum-join">
+                  <span className="eyebrow inline-flex items-center gap-2 hover:text-accent transition-colors cursor-pointer">
+                    Unlock the library <ArrowRight size={12} />
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+
+          <CurriculumRow />
+        </div>
+      </section>
+
+      <div className="hairline" />
+
+      {/* ==================== THE HOUSE — community ==================== */}
+      <section className="py-32" data-testid="section-house">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <Reveal>
+            <div className="grid gap-16 lg:grid-cols-12 lg:gap-12 items-center">
+              <div className="lg:col-span-6">
+                <p className="eyebrow mb-8">04 — The House</p>
+                <blockquote className="serif italic text-3xl md:text-4xl lg:text-[2.5rem] leading-[1.2] tracking-tight text-foreground/90">
+                  A private room above the market. Members share setups in the morning, track each other's wins at noon, and decompress in the evening — curated, not crowded.
+                </blockquote>
+                <p className="mt-8 text-muted-foreground leading-relaxed max-w-md">
+                  Not a Discord. A members' house. Seven focused channels, a forum for deeper work, and a desk that answers.
+                </p>
+              </div>
+              {/* stylized chat mockup */}
+              <div className="lg:col-span-6">
+                <div className="border border-accent/25 bg-card">
+                  <div className="hairline-bottom px-6 py-4 flex items-center justify-between">
+                    <span className="eyebrow">The House · 7 channels</span>
+                    <span className="flex gap-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent/40" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent/40" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent/40" />
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-12 min-h-[360px]">
+                    <ul className="col-span-5 border-r border-border/60 p-6 space-y-3">
+                      {["general", "crypto", "forex", "options", "wins", "setups", "ask-the-pros"].map((c, i) => (
+                        <li key={c} className={`mono uppercase tracking-wider-editorial text-xs flex items-center gap-2 ${i === 1 ? "text-accent" : "text-muted-foreground"}`}>
+                          <span className="opacity-60">#</span>{c}
+                          {i === 1 && <span className="ml-auto h-px w-4 bg-accent" />}
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="col-span-7 p-6 space-y-5">
+                      <div>
+                        <div className="eyebrow mb-1">Marcus · 9:14 AM</div>
+                        <p className="text-sm leading-relaxed">BTC tagged prev week high. Waiting for the sweep before taking size.</p>
+                      </div>
+                      <div>
+                        <div className="eyebrow mb-1">Sara · 9:18 AM</div>
+                        <p className="text-sm leading-relaxed">Funding rates turned negative. Contrarian tell — confluence with your level.</p>
+                      </div>
+                      <div>
+                        <div className="eyebrow mb-1">Priya · 9:22 AM</div>
+                        <p className="text-sm leading-relaxed">For options folks: 0DTE iron condor 5390/5395/5450/5455 at 14Δ. Risk $85 to make $15.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <div className="hairline" />
+
+      {/* ==================== FOUNDER ==================== */}
+      <section className="py-32" data-testid="section-founder">
+        <div className="mx-auto max-w-2xl px-6 text-center">
+          <Reveal>
+            <p className="eyebrow mb-8">05 — The Founder</p>
+            <blockquote className="serif italic text-2xl md:text-3xl leading-[1.3] text-foreground/90 mb-14">
+              &ldquo;I built the Academy I wish I'd had ten years ago — one where craft, not noise, is the standard.&rdquo;
+            </blockquote>
+            <div className="mx-auto w-40 h-40 border border-accent/50 flex items-center justify-center bg-card overflow-hidden">
+              <Logo size={110} />
+            </div>
+            <p className="eyebrow mt-6">Marcus Hale — Founder & Head of Desk</p>
+            <div className="mt-8 space-y-5 text-[15px] leading-relaxed text-foreground/85">
+              <p>
+                Fifteen years running risk at prop desks in Chicago and Houston. Former institutional FX trader. Still trades every session the Academy is live.
+              </p>
+              <p>
+                Organic Profits Academy opened in 2026 as a response to the noise — a quiet room built on the discipline that produced the only traders worth learning from.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <div className="hairline" />
+
+      {/* ==================== THE COLLECTION (MERCH) ==================== */}
+      <section className="py-32" data-testid="section-collection">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <Reveal>
+            <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-16">
+              <div className="lg:col-span-4">
+                <p className="eyebrow mb-6">06 — The Collection</p>
+              </div>
+              <div className="lg:col-span-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                <h2 className="display-xl serif">
+                  Considered<br />
+                  <span className="italic">basics.</span>
+                </h2>
+                <Link href="/shop" data-testid="link-shop-collection">
+                  <span className="eyebrow inline-flex items-center gap-2 hover:text-accent transition-colors cursor-pointer">
+                    Shop the Academy <ArrowRight size={12} />
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="grid gap-1 grid-cols-2 md:grid-cols-4">
+            {[
+              { bg: "hsl(207 54% 10%)", fg: "hsl(47 33% 94%)", label: "Leaf Tee · Navy" },
+              { bg: "hsl(47 33% 94%)", fg: "hsl(207 54% 10%)", label: "Academy Hoodie · Cream" },
+              { bg: "hsl(40 28% 55%)", fg: "hsl(207 54% 10%)", label: "Signet Cap · Gold" },
+              { bg: "hsl(37 13% 12%)", fg: "hsl(47 33% 94%)", label: "Desk Sweats · Black" },
+            ].map((m, idx) => (
+              <Reveal key={m.label} delay={idx * 60}>
+                <Link href="/shop">
+                  <a className="group block relative aspect-[3/4] overflow-hidden border border-border/60 transition-all duration-500 hover:border-accent/60" data-testid={`collection-${idx}`}>
+                    <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.03]" style={{ background: m.bg }} />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-60 group-hover:opacity-75 transition-opacity">
+                      <Logo size={80} />
+                    </div>
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <div className="eyebrow" style={{ color: m.fg, opacity: 0.8 }}>0{idx + 1}</div>
+                      <div className="mt-1 mono text-[11px] uppercase tracking-wider-editorial" style={{ color: m.fg }}>
+                        {m.label}
+                      </div>
+                    </div>
+                  </a>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="hairline" />
+
+      {/* ==================== PRICING — membership card ==================== */}
+      <section className="py-32" data-testid="section-pricing">
+        <div className="mx-auto max-w-lg px-6 text-center">
+          <Reveal>
+            <p className="eyebrow mb-6">07 — Membership</p>
+            <div className="border border-accent bg-card p-10 md:p-12">
+              <div className="eyebrow mb-4">Lifetime Membership</div>
+              <div className="serif text-6xl md:text-7xl tracking-tight" style={{ fontWeight: 400 }}>$1,100</div>
+              <p className="mt-3 text-sm text-muted-foreground">One payment. Perpetual access.</p>
+
+              <div className="hairline my-10" />
+
+              <div className="space-y-3 text-left">
+                {[
+                  { id: "full", label: "Pay in full", price: "$1,100 today" },
+                  { id: "2mo", label: "2 months", price: "$550 × 2" },
+                  { id: "3mo", label: "3 months", price: "$367 × 3" },
+                  { id: "4mo", label: "4 months", price: "$275 × 4" },
+                ].map((p) => (
+                  <div key={p.id} className="flex items-center justify-between py-3 hairline-bottom last:border-b-0">
+                    <div className="flex items-center gap-3">
+                      <span className="h-3 w-3 border border-accent/50" />
+                      <span className="mono uppercase tracking-wider-editorial text-[11px]">{p.label}</span>
+                    </div>
+                    <span className="mono text-[11px] text-muted-foreground uppercase tracking-wider-editorial">{p.price}</span>
+                  </div>
                 ))}
               </div>
-            </div>
 
-            {/* Right: floating logo with ring */}
-            <div className="lg:col-span-5">
-              <div className="relative mx-auto flex aspect-square max-w-md items-center justify-center">
-                <div className="absolute inset-0 rounded-full border border-accent/20" />
-                <div className="absolute inset-8 rounded-full border border-accent/15" />
-                <div className="absolute inset-16 rounded-full border border-accent/10" />
-                {/* floating logo */}
-                <div className="relative z-10 animate-[float_6s_ease-in-out_infinite]">
-                  <div className="rounded-full" style={{ boxShadow: "0 0 80px 20px hsl(40 28% 55% / 0.18), 0 0 0 1px hsl(40 28% 55% / 0.5)" }}>
-                    <Logo size={240} className="!rounded-full" />
-                  </div>
-                </div>
-                {/* decorative candles around */}
-                <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 400" fill="none">
-                  {Array.from({ length: 24 }).map((_, i) => {
-                    const angle = (i / 24) * Math.PI * 2;
-                    const r = 185;
-                    const x = 200 + Math.cos(angle) * r;
-                    const y = 200 + Math.sin(angle) * r;
-                    const h = 10 + (i % 5) * 4;
-                    const color = i % 3 === 0 ? "#7bac3f" : "#ae9b6c";
-                    return <rect key={i} x={x - 1.5} y={y - h / 2} width="3" height={h} fill={color} opacity="0.6" />;
-                  })}
-                </svg>
-              </div>
+              <Link href="/pricing" data-testid="link-pricing-reserve">
+                <Button size="lg" className="mt-10 w-full bg-primary text-primary-foreground hover:bg-[hsl(89_48%_46%)] hover:text-[hsl(207_54%_8%)] transition-colors h-12 rounded-none mono uppercase tracking-widest-editorial text-[11px] font-medium">
+                  Reserve Your Spot
+                </Button>
+              </Link>
+
+              <p className="eyebrow-subtle mt-6">14-day money-back guarantee</p>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      <style>{`@keyframes float { 0%,100% { transform: translateY(0px) } 50% { transform: translateY(-10px) } }`}</style>
+      <div className="hairline" />
 
-      {/* SOCIAL PROOF */}
-      <section className="border-y border-border/60 bg-muted/40 py-8">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <p className="eyebrow mb-6 text-center text-foreground/60">As referenced in</p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-foreground/50">
-            {FEATURED.map((f) => (
-              <span key={f.name} className="serif text-xl md:text-2xl italic opacity-80 hover:opacity-100 transition-opacity">
-                {f.name}
-              </span>
-            ))}
-          </div>
+      {/* ==================== TESTIMONIALS — pull quote ==================== */}
+      <section className="py-40" data-testid="section-testimonials">
+        <div className="mb-14 text-center">
+          <p className="eyebrow">08 — Member Voices</p>
         </div>
+        <Testimonials />
       </section>
 
-      {/* WHAT YOU GET */}
-      <section className="py-24 lg:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="hairline" />
+
+      {/* ==================== FAQ ==================== */}
+      <section className="py-32" data-testid="section-faq">
+        <div className="mx-auto max-w-3xl px-6 lg:px-10">
           <Reveal>
-            <div className="max-w-2xl">
-              <p className="eyebrow mb-4">Membership includes</p>
-              <h2 className="serif text-4xl md:text-5xl tracking-tight">Everything you need to build a disciplined practice.</h2>
+            <div className="mb-12">
+              <p className="eyebrow mb-6">09 — Frequently Asked</p>
+              <h2 className="display-xl serif">
+                Before <span className="italic">you join.</span>
+              </h2>
             </div>
           </Reveal>
-
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { icon: Video, t: "Live Webinars", d: "Weekly market open sessions and niche deep-dives. Replays archived in full." },
-              { icon: PlayCircle, t: "On-Demand Library", d: "Hundreds of hours of curriculum across crypto, futures, options, and forex." },
-              { icon: Users, t: "Private Community", d: "Real-time chat with the desk plus a focused forum for strategy and review." },
-              { icon: Shirt, t: "Merchandise", d: "Members-only discount on the full apparel line. Shipped from our US warehouse." },
-            ].map((b, i) => (
-              <Reveal key={b.t} delay={i * 80}>
-                <div className="gold-glow rounded-xl border border-card-border bg-card p-6 h-full">
-                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-accent/15 text-accent">
-                    <b.icon size={18} strokeWidth={1.8} />
-                  </div>
-                  <h3 className="mt-5 text-xl font-medium">{b.t}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{b.d}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4 MARKETS */}
-      <section className="border-y border-border/60 bg-muted/30 py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Reveal>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
-              <div className="max-w-xl">
-                <p className="eyebrow mb-4">The Four Markets</p>
-                <h2 className="serif text-4xl md:text-5xl tracking-tight">Master every environment.</h2>
-              </div>
-              <p className="max-w-md text-muted-foreground text-sm leading-relaxed">
-                Each track is a complete curriculum, not a one-off video series. Structured from first principles to advanced desk-grade tactics.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {(["crypto", "futures", "options", "forex"] as const).map((n, i) => {
-              const meta = NICHE_META[n];
-              const Icon = meta.icon;
-              const blurbs: Record<string, string> = {
-                crypto: "Spot, perps, and on-chain flow. Liquidity-driven setups across BTC, ETH, and major alts.",
-                futures: "ES, NQ, CL, GC. Opening range, volume profile, and prop-firm ready risk frameworks.",
-                options: "0DTE spreads to LEAPS. Greeks, vol, and premium selling with defined risk.",
-                forex: "London and NY sessions, macro flows, and smart-money concepts applied to the majors.",
-              };
-              return (
-                <Reveal key={n} delay={i * 100}>
-                  <div className={`${meta.className} gold-glow rounded-xl border p-6 h-full bg-card`}>
-                    <div
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-md"
-                      style={{ background: `hsl(var(--niche) / 0.18)`, color: `hsl(var(--niche))` }}
-                    >
-                      <Icon size={18} strokeWidth={1.8} />
-                    </div>
-                    <h3 className="mt-5 text-xl font-medium serif">{meta.label}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{blurbs[n]}</p>
-                    <Link href="/library" data-testid={`link-market-${n}`}>
-                      <a className="mt-4 inline-flex items-center gap-1 text-xs font-medium hover:text-accent" style={{ color: "hsl(var(--niche))" }}>
-                        Explore track <ArrowRight size={12} />
-                      </a>
-                    </Link>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CURRICULUM PREVIEW */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Reveal>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
-              <div>
-                <p className="eyebrow mb-4">Curriculum preview</p>
-                <h2 className="serif text-4xl md:text-5xl tracking-tight">A small taste of what's inside.</h2>
-              </div>
-              <Link href="/pricing" data-testid="link-curriculum-join"><Button variant="outline" className="border-accent/40 hover:bg-accent/10">Unlock the library</Button></Link>
-            </div>
-          </Reveal>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {SAMPLE_COURSES.map((c, i) => (
-              <Reveal key={c.title} delay={i * 60}>
-                <VideoThumbnail niche={c.niche} title={c.title} locked={c.locked} />
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* INSTRUCTOR / FOUNDER */}
-      <section className="border-y border-border/60 bg-muted/30 py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid gap-10 md:grid-cols-5 items-center">
-            <Reveal className="md:col-span-2">
-              <div className="relative mx-auto w-full max-w-xs aspect-square rounded-2xl border border-accent/30 bg-gradient-to-br from-brand-navy to-brand-navy/60 flex items-center justify-center overflow-hidden">
-                <Logo size={160} />
-                <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 0 80px rgba(174,155,108,0.15)" }} />
-              </div>
-            </Reveal>
-            <div className="md:col-span-3">
-              <Reveal>
-                <p className="eyebrow mb-4">The desk</p>
-                <h2 className="serif text-4xl md:text-5xl tracking-tight">Taught by practitioners, not influencers.</h2>
-                <p className="mt-5 text-muted-foreground text-[15px] leading-relaxed max-w-xl">
-                  Our instructors are former prop and institutional traders who still run risk daily. You'll learn from people whose P&L has a cost basis — not from content creators chasing a hook.
-                </p>
-                <div className="mt-6 grid grid-cols-2 gap-3 max-w-md">
-                  {[
-                    "15+ years combined desk experience",
-                    "Funded across 4 prop firms",
-                    "Published curriculum since 2018",
-                    "No affiliate marketing, ever",
-                  ].map((p) => (
-                    <div key={p} className="flex items-start gap-2 text-sm text-foreground/85">
-                      <Check size={14} className="mt-0.5 text-primary shrink-0" strokeWidth={2.4} />
-                      {p}
-                    </div>
-                  ))}
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Reveal>
-            <div className="max-w-xl mb-14">
-              <p className="eyebrow mb-4">Member voices</p>
-              <h2 className="serif text-4xl md:text-5xl tracking-tight">Real results, from people doing the work.</h2>
-            </div>
-          </Reveal>
-          <div className="grid gap-5 md:grid-cols-3">
-            {TESTIMONIALS.map((t, i) => (
-              <Reveal key={t.name} delay={i * 100}>
-                <figure className="gold-glow rounded-xl border border-card-border bg-card p-7 h-full flex flex-col">
-                  <blockquote className="text-[15px] leading-relaxed text-foreground/90 flex-1 serif italic">
-                    "{t.body}"
-                  </blockquote>
-                  <figcaption className="mt-5 text-sm">
-                    <p className="font-medium">{t.name}</p>
-                    <p className="text-muted-foreground text-xs mt-0.5">{t.city}</p>
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PRICING */}
-      <section className="border-y border-border/60 bg-muted/40 py-24" id="pricing">
-        <div className="mx-auto max-w-5xl px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center">
-              <p className="eyebrow mb-4">Lifetime membership</p>
-              <h2 className="serif text-4xl md:text-5xl tracking-tight">One payment. Forever access.</h2>
-              <p className="mt-5 text-muted-foreground max-w-xl mx-auto">
-                No subscriptions. No upsells. Choose your payment cadence — it all totals the same $1,100.
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal className="mt-14">
-            <div className="rounded-2xl border border-accent/40 bg-card p-8 md:p-12 gold-glow">
-              <div className="grid md:grid-cols-2 gap-10 items-center">
-                <div>
-                  <div className="eyebrow text-accent">Organic Profits Academy</div>
-                  <h3 className="serif text-4xl mt-3">Lifetime Access</h3>
-                  <p className="mt-2 text-muted-foreground text-sm">One-time payment. Perpetual membership.</p>
-                  <div className="mt-6 flex items-baseline gap-2">
-                    <span className="serif text-6xl">$1,100</span>
-                    <span className="text-muted-foreground text-sm">one-time</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">Or split into 2, 3, or 4 monthly payments.</p>
-                  <Link href="/pricing" data-testid="link-pricing-join">
-                    <Button size="lg" className="mt-8 w-full bg-primary text-primary-foreground font-medium h-12">
-                      Join the Academy
-                    </Button>
-                  </Link>
-                </div>
-                <ul className="space-y-3">
-                  {[
-                    "Full on-demand video library across all 4 markets",
-                    "Live daily pre-market desk sessions",
-                    "Weekly niche deep-dive webinars with replays",
-                    "Private community: real-time chat + forum",
-                    "15% off the full merchandise line",
-                    "14-day money-back guarantee",
-                  ].map((p) => (
-                    <li key={p} className="flex items-start gap-3 text-sm">
-                      <Check size={16} className="mt-0.5 text-primary shrink-0" strokeWidth={2.4} />
-                      <span className="text-foreground/90">{p}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-24">
-        <div className="mx-auto max-w-3xl px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center mb-10">
-              <p className="eyebrow mb-4">Frequently asked</p>
-              <h2 className="serif text-4xl md:text-5xl tracking-tight">Before you join.</h2>
-            </div>
-          </Reveal>
-          <Accordion type="single" collapsible className="border-t border-border">
+          <Accordion type="single" collapsible className="hairline-top">
             {FAQ.map((f, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border-b border-border">
-                <AccordionTrigger className="text-left serif text-lg py-5" data-testid={`faq-trigger-${i}`}>{f.q}</AccordionTrigger>
-                <AccordionContent className="pb-5 text-muted-foreground text-[15px] leading-relaxed">{f.a}</AccordionContent>
+              <AccordionItem key={i} value={`faq-${i}`} className="hairline-bottom border-0">
+                <AccordionTrigger className="text-left py-6 hover:no-underline" data-testid={`faq-trigger-${i}`}>
+                  <div className="flex items-baseline gap-5 w-full">
+                    <span className="eyebrow shrink-0 pt-1">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="serif text-xl md:text-2xl tracking-tight" style={{ fontWeight: 400 }}>{f.q}</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pb-6 pl-14 text-muted-foreground text-[15px] leading-relaxed">
+                  {f.a}
+                </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>

@@ -19,42 +19,72 @@ export default function Shop() {
 
   return (
     <Layout>
-      <section className="py-12 lg:py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-10">
-            <p className="eyebrow mb-2">Apparel & accessories</p>
-            <h1 className="serif text-4xl md:text-5xl tracking-tight">Merch Store</h1>
-            <p className="mt-3 text-muted-foreground max-w-xl text-sm">
-              Heavy-weight, considered basics. Made in small runs. Members get 15% off at checkout.
-            </p>
-          </div>
+      {/* Editorial header */}
+      <section className="pt-24 pb-16 md:pt-32 md:pb-20">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <p className="eyebrow mb-5">03 — The Collection</p>
+          <h1 className="display-xl">
+            <span className="italic font-light text-accent">Heavy-weight</span> basics,
+            <br />made in small runs.
+          </h1>
+          <p className="mt-8 max-w-xl text-base text-muted-foreground leading-relaxed">
+            Worn at the desk. Worn at the gym. Worn to dinner. Members get 15% off at checkout.
+          </p>
+        </div>
+      </section>
 
-          <div className="flex flex-wrap gap-2 mb-10 border-b border-border pb-5">
-            {CATS.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setCat(c.id)}
-                className={`rounded-full border px-4 py-1.5 text-xs font-medium ${cat === c.id ? "border-accent bg-accent/10 text-accent" : "border-border text-foreground/70 hover:border-accent/40"}`}
-                data-testid={`shop-filter-${c.id}`}
-              >{c.label}</button>
-            ))}
-          </div>
+      {/* Filter rail — mono labels */}
+      <section className="hairline-top hairline-bottom py-5">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 flex flex-wrap items-center gap-x-8 gap-y-3">
+          <span className="eyebrow-subtle text-[10px]">Filter</span>
+          {CATS.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setCat(c.id)}
+              className={`mono text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                cat === c.id ? "text-accent" : "text-foreground/50 hover:text-foreground"
+              }`}
+              data-testid={`shop-filter-${c.id}`}
+            >
+              {c.label}
+            </button>
+          ))}
+          <span className="ml-auto mono text-[11px] text-muted-foreground/70">
+            {filtered.length.toString().padStart(2, "0")} items
+          </span>
+        </div>
+      </section>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((p) => (
+      {/* Lookbook grid */}
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-14 md:gap-x-10 md:gap-y-20">
+            {filtered.map((p, idx) => (
               <Link key={p.id} href={`/shop/${p.id}`} data-testid={`product-${p.id}`}>
                 <a className="group block">
-                  <div className="gold-glow rounded-lg border border-border/60 overflow-hidden">
-                    <ProductMockup category={p.category} baseColor={p.baseColor} />
+                  <div className="relative aspect-[3/4] overflow-hidden bg-[hsl(var(--off-white))]">
+                    <div className="absolute inset-0 transition-transform duration-[600ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.02]">
+                      <ProductMockup category={p.category} baseColor={p.baseColor} />
+                    </div>
                   </div>
-                  <div className="mt-3">
-                    <h3 className="font-medium text-sm">{p.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-0.5 serif">${p.price.toFixed(2)}</p>
+                  <div className="mt-4 flex items-start justify-between gap-3">
+                    <div>
+                      <p className="mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 mb-1">
+                        {String(idx + 1).padStart(2, "0")} / {p.category}
+                      </p>
+                      <h3 className="mono text-[12px] uppercase tracking-[0.1em] text-foreground">
+                        {p.name} — ${p.price.toFixed(0)}
+                      </h3>
+                    </div>
                   </div>
                 </a>
               </Link>
             ))}
           </div>
+
+          {filtered.length === 0 && (
+            <p className="text-center py-20 text-muted-foreground italic">Nothing in this category yet.</p>
+          )}
         </div>
       </section>
     </Layout>

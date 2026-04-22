@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowBigUp, MessageSquare, Plus } from "lucide-react";
+import { ArrowBigUp, Plus } from "lucide-react";
 
 const CATEGORIES = ["Strategy", "Psychology", "Tools", "Wins", "Ask a Question"];
 
@@ -21,49 +21,65 @@ export function Forum() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-        <div className="flex flex-wrap gap-2">
+      {/* Filter rail */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div className="flex flex-wrap items-center gap-x-7 gap-y-2">
+          <span className="eyebrow-subtle text-[10px]">Filter</span>
           {["All", ...CATEGORIES].map((c) => (
             <button
               key={c}
               onClick={() => setCategory(c)}
-              className={`rounded-full border px-3.5 py-1 text-xs font-medium ${category === c ? "border-accent bg-accent/10 text-accent" : "border-border text-foreground/70 hover:border-accent/40"}`}
+              className={`mono text-[11px] uppercase tracking-[0.16em] transition-colors ${
+                category === c ? "text-accent" : "text-foreground/50 hover:text-foreground"
+              }`}
               data-testid={`forum-filter-${c}`}
-            >{c}</button>
+            >
+              {c}
+            </button>
           ))}
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="bg-primary text-primary-foreground" data-testid="button-new-post">
-              <Plus size={14} className="mr-1" /> New post
-            </Button>
+            <button
+              className="bg-accent text-[hsl(var(--warm-black))] mono text-[10px] uppercase tracking-[0.2em] h-10 px-5 inline-flex items-center gap-2 hover:bg-[hsl(var(--success))] hover:text-[hsl(var(--off-white))] transition-colors"
+              data-testid="button-new-post"
+            >
+              <Plus size={13} /> New post
+            </button>
           </DialogTrigger>
           <NewPostDialog onClose={() => setOpen(false)} />
         </Dialog>
       </div>
 
-      <div className="divide-y divide-border border border-card-border rounded-xl bg-card overflow-hidden">
+      {/* Threads — hairline separated list, no boxed card */}
+      <div className="divide-y divide-[hsl(var(--accent)/0.15)] border-y border-[hsl(var(--accent)/0.15)]">
         {filtered.map((p) => (
           <Link key={p.id} href={`/community/forum/${p.id}`} data-testid={`forum-post-${p.id}`}>
-            <a className="block hover-elevate p-5">
-              <div className="flex gap-4">
+            <a className="group block py-6">
+              <div className="flex gap-6">
                 <div className="flex flex-col items-center gap-0.5 shrink-0 w-10">
-                  <ArrowBigUp size={18} className="text-accent" />
-                  <span className="serif text-lg leading-none">{p.upvotes}</span>
+                  <ArrowBigUp size={16} className="text-accent" strokeWidth={1.5} />
+                  <span className="mono text-[11px] text-foreground/80">{p.upvotes}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="rounded-full border border-accent/40 bg-accent/5 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-accent">{p.category}</span>
-                    <span className="text-xs text-muted-foreground">· by {p.authorName}</span>
+                  <div className="flex flex-wrap items-center gap-3 mb-2 mono text-[10px] uppercase tracking-[0.15em]">
+                    <span className="text-accent">{p.category}</span>
+                    <span className="text-muted-foreground/70">/ by {p.authorName}</span>
                   </div>
-                  <h3 className="serif text-lg leading-snug">{p.title}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{p.body}</p>
+                  <h3 className="serif text-xl md:text-2xl font-normal leading-[1.15] group-hover:text-accent transition-colors">
+                    {p.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-2 max-w-2xl">
+                    {p.body}
+                  </p>
                 </div>
               </div>
             </a>
           </Link>
         ))}
-        {filtered.length === 0 && <p className="p-8 text-sm text-muted-foreground text-center">No posts in this category yet.</p>}
+        {filtered.length === 0 && (
+          <p className="py-14 text-sm italic text-muted-foreground text-center">No posts in this category yet.</p>
+        )}
       </div>
     </div>
   );
@@ -80,7 +96,8 @@ function NewPostDialog({ onClose }: { onClose: () => void }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/forum/posts"] });
-      setTitle(""); setBody("");
+      setTitle("");
+      setBody("");
       onClose();
     },
   });
@@ -88,27 +105,60 @@ function NewPostDialog({ onClose }: { onClose: () => void }) {
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle className="serif text-2xl">New post</DialogTitle>
+        <DialogTitle className="serif text-2xl font-normal">New post</DialogTitle>
       </DialogHeader>
-      <form onSubmit={(e) => { e.preventDefault(); m.mutate(); }} className="space-y-4" data-testid="form-new-post">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          m.mutate();
+        }}
+        className="space-y-5 mt-2"
+        data-testid="form-new-post"
+      >
         <div>
-          <Label htmlFor="post-cat">Category</Label>
+          <Label htmlFor="post-cat" className="mono text-[10px] uppercase tracking-[0.15em]">Category</Label>
           <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger id="post-cat" data-testid="select-post-category"><SelectValue /></SelectTrigger>
+            <SelectTrigger id="post-cat" className="mt-2" data-testid="select-post-category">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
-              {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              {CATEGORIES.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
         <div>
-          <Label htmlFor="post-title">Title</Label>
-          <Input id="post-title" value={title} onChange={(e) => setTitle(e.target.value)} required data-testid="input-post-title" />
+          <Label htmlFor="post-title" className="mono text-[10px] uppercase tracking-[0.15em]">Title</Label>
+          <Input
+            id="post-title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            className="mt-2"
+            data-testid="input-post-title"
+          />
         </div>
         <div>
-          <Label htmlFor="post-body">Body</Label>
-          <Textarea id="post-body" value={body} onChange={(e) => setBody(e.target.value)} rows={6} required data-testid="textarea-post-body" />
+          <Label htmlFor="post-body" className="mono text-[10px] uppercase tracking-[0.15em]">Body</Label>
+          <Textarea
+            id="post-body"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            rows={6}
+            required
+            className="mt-2"
+            data-testid="textarea-post-body"
+          />
         </div>
-        <Button type="submit" className="bg-primary text-primary-foreground w-full" disabled={m.isPending} data-testid="button-submit-post">
+        <Button
+          type="submit"
+          className="bg-accent text-[hsl(var(--warm-black))] mono text-[11px] uppercase tracking-[0.22em] h-12 w-full rounded-none hover:bg-[hsl(var(--success))] hover:text-[hsl(var(--off-white))]"
+          disabled={m.isPending}
+          data-testid="button-submit-post"
+        >
           {m.isPending ? "Posting..." : "Publish post"}
         </Button>
       </form>

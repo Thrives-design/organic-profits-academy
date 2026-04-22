@@ -17,55 +17,62 @@ export function VideoThumbnail({
   const meta = NICHE_META[niche] ?? NICHE_META.crypto;
   const Icon = meta.icon;
   const base = color || meta.hex;
-  // Chart-styled gradient with logo watermark feel
+
+  // Restrained navy field with a single gold hairline and quiet chart-line.
+  // No neon, no glow, no blur.
   const style = {
-    background: `radial-gradient(120% 80% at 20% 10%, ${base}33 0%, transparent 60%), linear-gradient(135deg, #0c1b28 0%, #0c1b28 60%, ${base}22 100%)`,
+    background: `linear-gradient(180deg, #0c1b28 0%, #0c1b28 60%, #0a1621 100%)`,
   };
+
   return (
     <div
-      className={`relative aspect-video overflow-hidden rounded-lg border border-border/60 ${className}`}
+      className={`relative aspect-video overflow-hidden ${className}`}
       style={style}
     >
-      {/* Simulated chart candles */}
-      <svg viewBox="0 0 240 120" className="absolute inset-0 h-full w-full" preserveAspectRatio="none">
-        <g stroke={base} strokeWidth="2" opacity="0.6">
-          {Array.from({ length: 18 }).map((_, i) => {
-            const x = 10 + i * 13;
-            const h = 10 + Math.abs(Math.sin(i * 1.4) * 30) + (i % 3) * 5;
-            const y = 60 - h / 2 + Math.sin(i * 0.9) * 10;
-            const fill = i % 2 === 0 ? base : "#ae9b6c";
-            return (
-              <g key={i}>
-                <line x1={x} y1={y - 6} x2={x} y2={y + h + 6} />
-                <rect x={x - 3} y={y} width="6" height={h} fill={fill} opacity="0.85" stroke="none" />
-              </g>
-            );
-          })}
-        </g>
-        {/* subtle trendline */}
+      {/* Single thin trendline in gold — editorial, not noisy */}
+      <svg
+        viewBox="0 0 240 120"
+        className="absolute inset-0 h-full w-full"
+        preserveAspectRatio="none"
+        aria-hidden
+      >
+        {/* faint baseline */}
+        <line x1="0" y1="80" x2="240" y2="80" stroke="#ae9b6c" strokeWidth="0.5" opacity="0.18" />
+        {/* editorial trendline */}
         <path
-          d="M0 90 Q 60 60 120 70 T 240 30"
+          d="M0 95 C 40 80, 80 85, 120 65 S 200 35, 240 25"
           fill="none"
           stroke="#ae9b6c"
-          strokeWidth="1.5"
-          opacity="0.6"
+          strokeWidth="1"
+          opacity="0.55"
         />
+        {/* subtle markers */}
+        <circle cx="120" cy="65" r="1.5" fill="#ae9b6c" opacity="0.7" />
+        <circle cx="240" cy="25" r="1.5" fill="#ae9b6c" opacity="0.7" />
       </svg>
-      <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm border border-white/10">
-        <Icon size={11} />
-        {meta.label}
+
+      {/* Top-left niche label — mono, uppercase */}
+      <div className="absolute left-4 top-4 flex items-center gap-1.5">
+        <Icon size={10} className="text-[#ae9b6c]" strokeWidth={1.5} />
+        <span className="mono text-[9px] uppercase tracking-[0.2em] text-[#ae9b6c]">
+          {meta.label}
+        </span>
       </div>
+
+      {/* Center play affordance */}
       <div className="absolute inset-0 flex items-center justify-center">
         {locked ? (
-          <div className="flex flex-col items-center gap-1.5 rounded-full bg-black/40 px-4 py-2 backdrop-blur-sm">
-            <Lock size={20} className="text-[color:var(--tw-text-opacity)] text-white/90" />
-          </div>
+          <Lock size={22} className="text-[#f5f3ec]/70" strokeWidth={1.3} />
         ) : (
-          <PlayCircle size={44} className="text-white/80 drop-shadow-lg" strokeWidth={1.3} />
+          <PlayCircle size={40} className="text-[#f5f3ec]/75" strokeWidth={1} />
         )}
       </div>
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3">
-        <p className="line-clamp-2 text-sm font-medium text-white">{title}</p>
+
+      {/* Bottom title — no gradient, just hairline */}
+      <div className="absolute inset-x-0 bottom-0 px-4 py-3 border-t border-[#ae9b6c]/20">
+        <p className="line-clamp-2 text-[12px] tracking-tight text-[#f5f3ec]/90 serif leading-snug">
+          {title}
+        </p>
       </div>
     </div>
   );

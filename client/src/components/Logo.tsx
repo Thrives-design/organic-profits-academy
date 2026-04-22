@@ -16,8 +16,8 @@ export function Logo({ size = 32, className = "" }: { size?: number; className?:
 
 export function WordMark({ className = "" }: { className?: string }) {
   return (
-    <span className={`serif tracking-tight ${className}`}>
-      Organic Profits <span className="text-accent">Academy</span>
+    <span className={`serif tracking-tight leading-none ${className}`}>
+      Organic Profits <span className="italic text-accent">Academy</span>
     </span>
   );
 }

@@ -38,7 +38,7 @@ export const videos = pgTable("videos", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  niche: text("niche").notNull(), // crypto, futures, options, forex
+  niche: text("niche").notNull(), // crypto, forex, options
   level: text("level").notNull(), // beginner, advanced
   duration: text("duration").notNull(), // "42:18"
   instructor: text("instructor").notNull(),
@@ -165,5 +165,5 @@ export type PaymentPlan = typeof paymentPlans.$inferSelect;
 export type InsertPaymentPlan = z.infer<typeof insertPaymentPlanSchema>;
 export type VideoProgress = typeof videoProgress.$inferSelect;
 
-export const NICHES = ["crypto", "futures", "options", "forex"] as const;
+export const NICHES = ["crypto", "forex", "options"] as const;
 export type Niche = (typeof NICHES)[number];

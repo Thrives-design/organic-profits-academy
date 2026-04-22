@@ -5,7 +5,6 @@ import { useSession } from "@/context/SessionContext";
 import { NicheBadge } from "@/components/NicheBadge";
 import { VideoThumbnail } from "@/components/VideoThumbnail";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { CalendarPlus, ArrowRight, Video, Users, Shirt } from "lucide-react";
 
 export default function Dashboard() {
@@ -16,10 +15,15 @@ export default function Dashboard() {
   if (!user) {
     return (
       <Layout>
-        <div className="mx-auto max-w-2xl px-6 py-24 text-center">
-          <h1 className="serif text-4xl">Members only</h1>
-          <p className="mt-3 text-muted-foreground">Sign in to access your dashboard.</p>
-          <Link href="/login"><Button className="mt-6 bg-primary">Sign in</Button></Link>
+        <div className="mx-auto max-w-2xl px-6 py-40 text-center">
+          <p className="eyebrow mb-4">Private area</p>
+          <h1 className="serif text-4xl md:text-5xl font-normal">Members only</h1>
+          <p className="mt-4 text-muted-foreground">Sign in to access your dashboard.</p>
+          <Link href="/login">
+            <Button className="mt-8 bg-accent text-[hsl(var(--warm-black))] rounded-none mono text-[11px] uppercase tracking-[0.2em] h-12 px-8 hover:bg-[hsl(var(--success))] hover:text-[hsl(var(--off-white))]">
+              Sign in
+            </Button>
+          </Link>
         </div>
       </Layout>
     );
@@ -30,105 +34,156 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <section className="py-12 lg:py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          {/* Welcome card */}
-          <div className="rounded-2xl border border-accent/30 bg-card p-6 md:p-8 gold-glow" data-testid="card-welcome">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <p className="eyebrow mb-2">Welcome back</p>
-                <h1 className="serif text-3xl md:text-4xl tracking-tight">{user.name}</h1>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {user.isMember && <Badge className="bg-primary text-primary-foreground border-transparent">Lifetime Member</Badge>}
-                  {plan && plan.totalInstallments > 1 && (
-                    <Badge variant="outline" className="border-accent/40 text-accent" data-testid="badge-plan-status">
-                      Payment {plan.paidInstallments} of {plan.totalInstallments}
-                      {plan.nextChargeDate && ` · Next ${new Date(plan.nextChargeDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
-                    </Badge>
-                  )}
-                  {plan && plan.totalInstallments === 1 && (
-                    <Badge variant="outline" className="border-accent/40 text-accent">Paid in full</Badge>
-                  )}
-                </div>
-              </div>
-            </div>
+      {/* Welcome — editorial, no boxed card */}
+      <section className="pt-24 pb-14 md:pt-32 md:pb-20">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <p className="eyebrow mb-5">Welcome back</p>
+          <h1 className="display-xl">
+            <span className="italic text-accent font-light">{user.name.split(" ")[0]}.</span>
+          </h1>
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 mono text-[11px] uppercase tracking-[0.16em]">
+            {user.isMember && <span className="text-accent">Lifetime member</span>}
+            {plan && plan.totalInstallments > 1 && (
+              <span className="text-muted-foreground" data-testid="badge-plan-status">
+                Payment {plan.paidInstallments} / {plan.totalInstallments}
+                {plan.nextChargeDate &&
+                  ` · Next ${new Date(plan.nextChargeDate).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}`}
+              </span>
+            )}
+            {plan && plan.totalInstallments === 1 && (
+              <span className="text-muted-foreground">Paid in full</span>
+            )}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-10 grid gap-8 lg:grid-cols-3">
-            {/* Continue learning */}
-            <div className="lg:col-span-2">
-              <h2 className="serif text-2xl mb-4">Continue learning</h2>
+      <div className="hairline" />
+
+      {/* Main grid */}
+      <section className="py-20 md:py-24">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <div className="grid gap-16 lg:grid-cols-[2fr_1fr] lg:gap-20">
+            {/* Left: continue learning + upcoming */}
+            <div>
+              <div className="flex items-baseline justify-between mb-8">
+                <p className="eyebrow">01 — Continue learning</p>
+                <Link href="/library">
+                  <a className="mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground hover:text-accent">
+                    All sessions →
+                  </a>
+                </Link>
+              </div>
+
               {lastVideo && (
                 <Link href={`/library/${lastVideo.id}`} data-testid="link-continue-learning">
-                  <a className="block rounded-xl border border-card-border bg-card p-4 hover-elevate">
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <div className="sm:w-60 shrink-0">
-                        <VideoThumbnail niche={lastVideo.niche} title={lastVideo.title} color={lastVideo.thumbnailColor} />
+                  <a className="block group">
+                    <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_1.4fr] sm:gap-8">
+                      <div className="aspect-video overflow-hidden">
+                        <VideoThumbnail
+                          niche={lastVideo.niche}
+                          title={lastVideo.title}
+                          color={lastVideo.thumbnailColor}
+                        />
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
+                      <div>
+                        <div className="flex items-center gap-3 mb-3">
                           <NicheBadge niche={lastVideo.niche} />
-                          <span className="text-xs text-muted-foreground">{lastVideo.duration}</span>
+                          <span className="mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+                            {lastVideo.duration}
+                          </span>
                         </div>
-                        <h3 className="serif text-xl">{lastVideo.title}</h3>
-                        <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{lastVideo.description}</p>
-                        <p className="mt-3 text-xs text-muted-foreground">Taught by {lastVideo.instructor}</p>
+                        <h3 className="serif text-2xl md:text-3xl tracking-tight font-normal leading-[1.1] group-hover:text-accent transition-colors">
+                          {lastVideo.title}
+                        </h3>
+                        <p className="mt-4 text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                          {lastVideo.description}
+                        </p>
+                        <p className="mt-5 mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground/80">
+                          Taught by {lastVideo.instructor}
+                        </p>
                       </div>
                     </div>
                   </a>
                 </Link>
               )}
 
-              <h2 className="serif text-2xl mb-4 mt-10">Upcoming live sessions</h2>
-              <div className="space-y-3">
+              <div className="hairline mt-16 mb-12" />
+
+              <p className="eyebrow mb-8">02 — Upcoming at the desk</p>
+              <div className="divide-y divide-[hsl(var(--accent)/0.15)] border-y border-[hsl(var(--accent)/0.15)]">
                 {upcomingWebinars.map((w) => {
                   const d = new Date(w.scheduledAt);
                   return (
-                    <div key={w.id} className="rounded-lg border border-card-border bg-card p-4 flex flex-col sm:flex-row sm:items-center gap-3" data-testid={`webinar-${w.id}`}>
-                      <div className="text-center sm:w-20 shrink-0">
-                        <div className="text-[10px] uppercase tracking-wider text-accent">{d.toLocaleDateString("en-US", { month: "short" })}</div>
-                        <div className="serif text-2xl">{d.getDate()}</div>
-                        <div className="text-xs text-muted-foreground">{d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/Chicago" })} CT</div>
+                    <div
+                      key={w.id}
+                      className="grid grid-cols-[auto_1fr_auto] items-center gap-6 py-5"
+                      data-testid={`webinar-${w.id}`}
+                    >
+                      <div className="w-16 text-center">
+                        <div className="mono text-[10px] uppercase tracking-[0.15em] text-accent">
+                          {d.toLocaleDateString("en-US", { month: "short" })}
+                        </div>
+                        <div className="serif text-3xl font-normal leading-none mt-1">{d.getDate()}</div>
+                        <div className="mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground/70 mt-1">
+                          {d.toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            timeZone: "America/Chicago",
+                          })} CT
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-3 mb-1">
                           <NicheBadge niche={w.niche} />
                         </div>
-                        <p className="font-medium text-sm">{w.title}</p>
-                        <p className="text-xs text-muted-foreground">with {w.instructor} · {w.durationMin}m</p>
+                        <p className="serif text-lg font-normal leading-snug">{w.title}</p>
+                        <p className="mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground mt-1">
+                          with {w.instructor} · {w.durationMin}m
+                        </p>
                       </div>
-                      <Button variant="outline" size="sm" className="border-accent/40" data-testid={`button-add-calendar-${w.id}`}>
-                        <CalendarPlus size={14} className="mr-1" /> Add
-                      </Button>
+                      <button
+                        className="mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground hover:text-accent inline-flex items-center gap-1.5 shrink-0"
+                        data-testid={`button-add-calendar-${w.id}`}
+                      >
+                        <CalendarPlus size={12} /> Add
+                      </button>
                     </div>
                   );
                 })}
-                {upcomingWebinars.length === 0 && <p className="text-sm text-muted-foreground">No webinars scheduled yet.</p>}
+                {upcomingWebinars.length === 0 && (
+                  <p className="py-8 text-sm italic text-muted-foreground">Nothing scheduled yet.</p>
+                )}
               </div>
             </div>
 
-            <aside className="space-y-3">
-              <h2 className="serif text-2xl mb-4">Quick links</h2>
-              {[
-                { href: "/library", label: "Video Library", icon: Video, sub: `${videosQ.data?.length ?? 0} sessions` },
-                { href: "/community", label: "Community", icon: Users, sub: "Chat + Forum" },
-                { href: "/shop", label: "Merch Store", icon: Shirt, sub: "Members 15% off" },
-              ].map((q) => (
-                <Link key={q.href} href={q.href} data-testid={`link-quick-${q.label.toLowerCase().replace(/ /g, "-")}`}>
-                  <a className="block rounded-lg border border-card-border bg-card p-4 hover-elevate gold-glow">
-                    <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-md bg-accent/15 text-accent flex items-center justify-center">
-                        <q.icon size={16} />
+            {/* Right: quick links */}
+            <aside>
+              <p className="eyebrow mb-8">03 — The House</p>
+              <div className="divide-y divide-[hsl(var(--accent)/0.15)] border-y border-[hsl(var(--accent)/0.15)]">
+                {[
+                  { href: "/library", label: "Video Library", icon: Video, sub: `${videosQ.data?.length ?? 0} sessions` },
+                  { href: "/community", label: "Community", icon: Users, sub: "Chat + Forum" },
+                  { href: "/shop", label: "The Collection", icon: Shirt, sub: "Members 15% off" },
+                ].map((q) => (
+                  <Link key={q.href} href={q.href} data-testid={`link-quick-${q.label.toLowerCase().replace(/ /g, "-")}`}>
+                    <a className="group flex items-center gap-4 py-5">
+                      <q.icon size={16} className="text-accent shrink-0" strokeWidth={1.3} />
+                      <div className="flex-1 min-w-0">
+                        <p className="serif text-lg font-normal leading-tight group-hover:text-accent transition-colors">
+                          {q.label}
+                        </p>
+                        <p className="mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground mt-0.5">
+                          {q.sub}
+                        </p>
                       </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{q.label}</p>
-                        <p className="text-xs text-muted-foreground">{q.sub}</p>
-                      </div>
-                      <ArrowRight size={14} className="text-muted-foreground" />
-                    </div>
-                  </a>
-                </Link>
-              ))}
+                      <ArrowRight size={14} className="text-muted-foreground/50 group-hover:text-accent transition-colors" />
+                    </a>
+                  </Link>
+                ))}
+              </div>
             </aside>
           </div>
         </div>

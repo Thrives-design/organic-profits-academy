@@ -55,7 +55,10 @@ export default {
           navy: "hsl(207 54% 10% / <alpha-value>)",
           green: "hsl(89 48% 46% / <alpha-value>)",
           gold: "hsl(40 28% 55% / <alpha-value>)",
-          cream: "hsl(50 25% 94% / <alpha-value>)",
+          cream: "hsl(47 33% 94% / <alpha-value>)",
+          "warm-black": "hsl(37 13% 9% / <alpha-value>)",
+          "warm-divider": "hsl(46 26% 86% / <alpha-value>)",
+          "off-white": "hsl(42 37% 91% / <alpha-value>)",
         },
         chart: {
           "1": "hsl(var(--chart-1) / <alpha-value>)",

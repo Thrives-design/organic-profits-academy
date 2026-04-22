@@ -2,68 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LIGHT MODE - off-white surfaces */
-:root {
-  --button-outline: rgba(12, 27, 40, 0.12);
-  --badge-outline: rgba(12, 27, 40, 0.08);
-  --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(12, 27, 40, 0.04);
-  --elevate-2: rgba(12, 27, 40, 0.09);
+/* ========================================================================
+   ORGANIC PROFITS ACADEMY — premium "Trading meets Fashion" design system
+   Palette:
+     #0c1b28 navy        (207 54% 10%)  — dark surface
+     #f5f3ec cream       ( 47 33% 94%)  — light surface (NOT pure white)
+     #ae9b6c gold        ( 40 28% 55%)  — hairlines, eyebrows, accents
+     #7bac3f green       ( 89 48% 46%)  — CTA hover / active / success ONLY
+     #e6e2d4 warm divider( 46 26% 86%)
+     #f0ebe1 off-white   ( 42 37% 91%)  — text on dark
+     #1a1814 warm-black  ( 37 13%  9%)  — text on light
+   ======================================================================== */
 
-  /* Brand: navy=#0c1b28 (207 54% 10%), green=#7bac3f (89 48% 46%), gold=#ae9b6c (40 28% 55%) */
+/* LIGHT MODE — cream surfaces */
+:root {
+  --button-outline: rgba(26, 24, 20, 0.08);
+  --badge-outline: rgba(26, 24, 20, 0.08);
+  --opaque-button-border-intensity: -8;
+  --elevate-1: rgba(26, 24, 20, 0.035);
+  --elevate-2: rgba(26, 24, 20, 0.075);
+
   --brand-navy: 207 54% 10%;
   --brand-green: 89 48% 46%;
   --brand-gold: 40 28% 55%;
-  --brand-cream: 50 25% 94%;
+  --brand-cream: 47 33% 94%;
+  --brand-warm-black: 37 13% 9%;
+  --brand-warm-divider: 46 26% 86%;
 
-  --background: 50 25% 96%;       /* off-white #f5f3ec-ish */
-  --foreground: 207 54% 10%;      /* navy text */
-  --border: 40 18% 82%;
-  --card: 0 0% 100%;
-  --card-foreground: 207 54% 10%;
-  --card-border: 40 18% 85%;
-  --sidebar: 50 25% 94%;
-  --sidebar-foreground: 207 54% 10%;
-  --sidebar-border: 40 18% 82%;
-  --sidebar-primary: 89 48% 46%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 40 20% 88%;
-  --sidebar-accent-foreground: 207 54% 10%;
-  --sidebar-ring: 89 48% 46%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 207 54% 10%;
-  --popover-border: 40 18% 82%;
-  --primary: 89 48% 46%;                /* green CTA */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 40 20% 90%;
-  --secondary-foreground: 207 54% 10%;
-  --muted: 40 15% 92%;
-  --muted-foreground: 207 15% 38%;
-  --accent: 40 28% 55%;                 /* gold accent */
+  --background: 47 33% 94%;           /* #f5f3ec cream */
+  --foreground: 37 13% 9%;            /* #1a1814 warm near-black */
+  --border: 46 26% 86%;               /* #e6e2d4 warm divider */
+  --card: 47 33% 97%;                 /* near-cream card */
+  --card-foreground: 37 13% 9%;
+  --card-border: 46 26% 84%;
+  --sidebar: 47 33% 92%;
+  --sidebar-foreground: 37 13% 9%;
+  --sidebar-border: 46 26% 86%;
+  --sidebar-primary: 40 28% 55%;
+  --sidebar-primary-foreground: 47 33% 97%;
+  --sidebar-accent: 46 26% 88%;
+  --sidebar-accent-foreground: 37 13% 9%;
+  --sidebar-ring: 40 28% 55%;
+  --popover: 47 33% 97%;
+  --popover-foreground: 37 13% 9%;
+  --popover-border: 46 26% 84%;
+  --primary: 40 28% 55%;              /* GOLD = the CTA surface on premium */
+  --primary-foreground: 207 54% 10%;  /* navy text on gold button */
+  --secondary: 47 25% 90%;
+  --secondary-foreground: 37 13% 9%;
+  --muted: 47 25% 91%;
+  --muted-foreground: 37 10% 42%;
+  --accent: 40 28% 55%;               /* gold accent */
   --accent-foreground: 207 54% 10%;
-  --destructive: 0 70% 45%;
-  --destructive-foreground: 0 0% 100%;
-  --input: 40 18% 80%;
-  --ring: 89 48% 46%;
-  --chart-1: 89 48% 46%;
-  --chart-2: 40 28% 55%;
+  --success: 89 48% 46%;              /* green reserved for success */
+  --success-foreground: 47 33% 97%;
+  --destructive: 0 55% 48%;
+  --destructive-foreground: 47 33% 97%;
+  --input: 46 26% 82%;
+  --ring: 40 28% 55%;
+  --chart-1: 40 28% 55%;
+  --chart-2: 89 48% 46%;
   --chart-3: 207 54% 30%;
-  --chart-4: 25 70% 55%;
-  --chart-5: 170 50% 40%;
+  --chart-4: 37 13% 20%;
+  --chart-5: 46 26% 70%;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --font-serif: "Fraunces", Georgia, serif;
-  --font-mono: "JetBrains Mono", Menlo, monospace;
-  --radius: 0.5rem;
-  --shadow-2xs: 0px 1px 0px 0px hsl(207 54% 10% / 0.04);
-  --shadow-xs: 0px 1px 2px 0px hsl(207 54% 10% / 0.05);
-  --shadow-sm: 0px 1px 3px 0px hsl(207 54% 10% / 0.07);
-  --shadow: 0px 2px 6px -1px hsl(207 54% 10% / 0.08);
-  --shadow-md: 0px 6px 14px -3px hsl(207 54% 10% / 0.10);
-  --shadow-lg: 0px 12px 28px -6px hsl(207 54% 10% / 0.12);
-  --shadow-xl: 0px 20px 40px -10px hsl(207 54% 10% / 0.15);
-  --shadow-2xl: 0px 30px 60px -15px hsl(207 54% 10% / 0.20);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
+  --font-serif: "Fraunces", "Times New Roman", Georgia, serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
+  --radius: 0.25rem;                  /* tighter, more editorial */
+  --shadow-2xs: 0px 1px 0px 0px hsl(37 13% 9% / 0.04);
+  --shadow-xs: 0px 1px 2px 0px hsl(37 13% 9% / 0.05);
+  --shadow-sm: 0px 1px 3px 0px hsl(37 13% 9% / 0.06);
+  --shadow: 0px 2px 6px -1px hsl(37 13% 9% / 0.07);
+  --shadow-md: 0px 6px 14px -3px hsl(37 13% 9% / 0.08);
+  --shadow-lg: 0px 12px 28px -6px hsl(37 13% 9% / 0.10);
+  --shadow-xl: 0px 20px 40px -10px hsl(37 13% 9% / 0.12);
+  --shadow-2xl: 0px 30px 60px -15px hsl(37 13% 9% / 0.16);
 
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
@@ -74,49 +87,51 @@
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
-/* DARK MODE - deep navy primary surface */
+/* DARK MODE — deep navy */
 .dark {
   --button-outline: rgba(174, 155, 108, 0.18);
   --badge-outline: rgba(174, 155, 108, 0.12);
   --opaque-button-border-intensity: 9;
-  --elevate-1: rgba(174, 155, 108, 0.06);
-  --elevate-2: rgba(174, 155, 108, 0.12);
+  --elevate-1: rgba(240, 235, 225, 0.04);
+  --elevate-2: rgba(240, 235, 225, 0.09);
 
-  --background: 207 54% 7%;             /* deeper navy bg */
-  --foreground: 50 20% 92%;             /* soft cream text */
-  --border: 207 30% 18%;
-  --card: 207 50% 11%;                  /* brand navy card */
-  --card-foreground: 50 20% 92%;
-  --card-border: 207 30% 20%;
+  --background: 207 54% 7%;           /* deeper navy */
+  --foreground: 42 37% 91%;           /* #f0ebe1 warm off-white */
+  --border: 207 30% 16%;
+  --card: 207 50% 10%;                /* brand navy card */
+  --card-foreground: 42 37% 91%;
+  --card-border: 207 30% 18%;
   --sidebar: 207 54% 8%;
-  --sidebar-foreground: 50 20% 92%;
-  --sidebar-border: 207 30% 18%;
-  --sidebar-primary: 89 48% 46%;
-  --sidebar-primary-foreground: 207 54% 7%;
-  --sidebar-accent: 207 30% 18%;
-  --sidebar-accent-foreground: 50 20% 92%;
-  --sidebar-ring: 89 48% 50%;
-  --popover: 207 50% 12%;
-  --popover-foreground: 50 20% 92%;
-  --popover-border: 207 30% 22%;
-  --primary: 89 48% 50%;                /* brighter green in dark */
+  --sidebar-foreground: 42 37% 91%;
+  --sidebar-border: 207 30% 16%;
+  --sidebar-primary: 40 28% 58%;
+  --sidebar-primary-foreground: 207 54% 8%;
+  --sidebar-accent: 207 30% 14%;
+  --sidebar-accent-foreground: 42 37% 91%;
+  --sidebar-ring: 40 28% 60%;
+  --popover: 207 50% 11%;
+  --popover-foreground: 42 37% 91%;
+  --popover-border: 207 30% 20%;
+  --primary: 40 28% 58%;              /* gold surface (dark) */
   --primary-foreground: 207 54% 8%;
-  --secondary: 207 30% 16%;
-  --secondary-foreground: 50 20% 92%;
-  --muted: 207 30% 14%;
-  --muted-foreground: 40 15% 68%;
-  --accent: 40 28% 58%;                 /* gold */
+  --secondary: 207 30% 14%;
+  --secondary-foreground: 42 37% 91%;
+  --muted: 207 30% 12%;
+  --muted-foreground: 42 15% 68%;
+  --accent: 40 28% 60%;
   --accent-foreground: 207 54% 8%;
-  --destructive: 0 65% 50%;
-  --destructive-foreground: 0 0% 100%;
-  --input: 207 30% 22%;
-  --ring: 89 48% 50%;
-  --chart-1: 89 48% 55%;
-  --chart-2: 40 40% 62%;
+  --success: 89 48% 50%;
+  --success-foreground: 207 54% 8%;
+  --destructive: 0 60% 52%;
+  --destructive-foreground: 42 37% 91%;
+  --input: 207 30% 20%;
+  --ring: 40 28% 58%;
+  --chart-1: 40 28% 60%;
+  --chart-2: 89 48% 55%;
   --chart-3: 207 60% 55%;
-  --chart-4: 25 75% 60%;
-  --chart-5: 170 55% 50%;
-  --shadow-2xs: 0px 1px 0px 0px hsl(0 0% 0% / 0.3);
+  --chart-4: 42 37% 80%;
+  --chart-5: 46 26% 60%;
+  --shadow-2xs: 0px 1px 0px 0px hsl(0 0% 0% / 0.30);
   --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.35);
   --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.40);
   --shadow: 0px 4px 10px -1px hsl(0 0% 0% / 0.45);
@@ -135,38 +150,73 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+  * { @apply border-border; }
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
     font-feature-settings: "ss01", "cv11";
+    font-weight: 400;
   }
 
   h1, h2, h3, h4, h5 {
     font-family: var(--font-serif);
     font-feature-settings: "ss01";
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    line-height: 1;
+    font-weight: 400;           /* Fraunces reads display-worthy at regular */
   }
 
+  /* Editorial eyebrow — mono, uppercase, wide tracked */
   .eyebrow {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;       /* 11px */
+    font-weight: 500;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: hsl(var(--accent));
+    line-height: 1.2;
+  }
+
+  .eyebrow-subtle {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
   }
 
   .serif { font-family: var(--font-serif); }
   .mono { font-family: var(--font-mono); }
+
+  /* Hero-scale display type — cinematic */
+  .display-hero {
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 9vw, 7.5rem); /* 56px → 120px */
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    font-weight: 400;
+    font-variation-settings: "opsz" 144;
+    font-feature-settings: "ss01";
+  }
+
+  .display-xl {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    font-variation-settings: "opsz" 144;
+  }
+
+  body, p, li, span, div, button, input, textarea, label { font-weight: 400; }
+  .font-medium { font-weight: 500 !important; }
+  .font-semibold { font-weight: 500 !important; } /* downgrade semibold → medium */
+  /* "bold" in body is discouraged — keep in components where needed */
 }
 
 @layer utilities {
-  input[type='search']::-webkit-search-cancel-button {
-    @apply hidden;
-  }
+  input[type='search']::-webkit-search-cancel-button { @apply hidden; }
 
   [contenteditable][data-placeholder]:empty::before {
     content: attr(data-placeholder);
@@ -221,24 +271,28 @@
   .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after { inset: -1px; }
 
-  /* Gold hairline glow on hover for premium cards */
+  /* Restrained gold hairline on hover — subtle 3% scale + border appear */
   .gold-glow {
-    transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.4s ease;
   }
   .gold-glow:hover {
-    border-color: hsl(var(--accent) / 0.6);
-    box-shadow: 0 0 0 1px hsl(var(--accent) / 0.25), 0 12px 32px -12px hsl(var(--accent) / 0.30);
+    border-color: hsl(var(--accent) / 0.65);
+    box-shadow: 0 0 0 1px hsl(var(--accent) / 0.20);
+    transform: translateY(-2px) scale(1.003);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gold-glow:hover { transform: none; }
   }
 
-  /* Animated candlestick background particles */
-  @keyframes float-up {
-    0% { transform: translateY(0) scale(1); opacity: 0; }
-    10% { opacity: 0.5; }
-    90% { opacity: 0.3; }
-    100% { transform: translateY(-120vh) scale(0.8); opacity: 0; }
+  /* Ambient slow rising diagonal lines — 5% opacity */
+  @keyframes drift-up {
+    0% { transform: translate3d(0, 110%, 0) rotate(-14deg); opacity: 0; }
+    15% { opacity: 0.05; }
+    85% { opacity: 0.05; }
+    100% { transform: translate3d(10%, -110%, 0) rotate(-14deg); opacity: 0; }
   }
-  .candle-particle {
-    animation: float-up 12s linear infinite;
+  .ambient-line {
+    animation: drift-up 22s linear infinite;
   }
 
   @keyframes fade-up {
@@ -250,20 +304,40 @@
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1); }
   .reveal.in { opacity: 1; transform: translateY(0); }
 
-  /* Niche accent utilities */
-  .niche-crypto  { --niche: 33 95% 55%; }
-  .niche-futures { --niche: 207 60% 55%; }
-  .niche-options { --niche: 280 50% 60%; }
-  .niche-forex   { --niche: 170 55% 50%; }
-
-  .niche-tint {
-    background: linear-gradient(135deg, hsl(var(--niche) / 0.18), hsl(var(--niche) / 0.05));
-    border-color: hsl(var(--niche) / 0.35);
-    color: hsl(var(--niche));
+  @media (prefers-reduced-motion: reduce) {
+    .fade-up, .reveal { animation: none; opacity: 1; transform: none; transition: none; }
+    .ambient-line { animation: none; opacity: 0; }
   }
 
+  /* Gold hairline section divider — 15% opacity, 1px */
   .hairline {
     height: 1px;
-    background: linear-gradient(90deg, transparent, hsl(var(--accent) / 0.5), transparent);
+    background: hsl(var(--accent) / 0.18);
   }
+  .hairline-top { border-top: 1px solid hsl(var(--accent) / 0.18); }
+  .hairline-bottom { border-bottom: 1px solid hsl(var(--accent) / 0.18); }
+
+  /* Niche accent tokens retained for legacy usage — all muted to gold family */
+  .niche-crypto  { --niche: 40 28% 55%; }
+  .niche-forex   { --niche: 40 28% 55%; }
+  .niche-options { --niche: 40 28% 55%; }
+
+  .niche-tint {
+    background: hsl(var(--accent) / 0.06);
+    border-color: hsl(var(--accent) / 0.35);
+    color: hsl(var(--accent));
+  }
+
+  /* Horizontal scroll row for curriculum */
+  .scroll-x-snap {
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scroll-x-snap::-webkit-scrollbar { display: none; }
+  .scroll-x-snap > * { scroll-snap-align: start; }
+
+  /* Tracking helpers */
+  .tracking-widest-editorial { letter-spacing: 0.15em; }
+  .tracking-wider-editorial { letter-spacing: 0.12em; }
 }
