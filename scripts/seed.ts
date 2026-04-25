@@ -29,7 +29,7 @@ async function main() {
   await db.insert(users).values({
     email: "admin@organicprofits.com",
     password: adminHash,
-    name: "Admin",
+    name: "BillionairePrice",
     isMember: true,
     isAdmin: true,
   });
@@ -130,9 +130,93 @@ async function main() {
     });
   }
 
-  // ---- Chat messages (7 channels) ----
-  const channels = ["general", "crypto", "forex", "options", "wins", "setups", "ask-the-pros"];
+  // ---- Chat messages — mirrors the real Telegram channels (11) ----
+  const channels = [
+    "general",
+    "trade-ideas",
+    "profits",
+    "digital-downloads",
+    "organic-conversations",
+    "tips-tricks",
+    "credit-building",
+    "opa-events",
+    "backtesting",
+    "webinar-feedback",
+    "crypto-investing",
+  ];
   const chatSeed: Record<string, string[]> = {
+    "trade-ideas": [
+      "BTC tagged prev week high, waiting for the sweep.",
+      "ETH / BTC ratio starting to base out.",
+      "Looking at SOL for a pullback entry into the 15m FVG.",
+      "EUR/USD London session gave us the classic sweep-and-reclaim.",
+      "0DTE SPX: iron condor on at 14 delta, risk $85 to make $15.",
+      "USDJPY: short at daily FVG tap.",
+      "NQ: retest of VPOC then continuation.",
+      "AAPL: weekly breakout above 195 watching for momentum.",
+      "GLD: long the 200ma retest.",
+    ],
+    profits: [
+      "I had $350 yesterday — turned it into $700+. Goal is to keep stacking this account. 💯",
+      "Passed my funded account certificate yesterday. My guy going crazy 🔥",
+      "3R on the 0DTE iron condor — by the book.",
+      "Closed month at +14%. Risk discipline is everything.",
+      "First +$1k day today. Thank you team.",
+      "Hit my monthly target on day 12.",
+      "Closed NQ long for +30pts.",
+      "Funded my second prop account this week.",
+    ],
+    "digital-downloads": [
+      "Dropped this week's backtest workbook — link in pinned.",
+      "New PDF: pre-market routine checklist.",
+      "Updated risk-management template for prop firms.",
+      "Link to the full webinar archive in pinned.",
+      "Added the chart annotation template Byron uses.",
+    ],
+    "organic-conversations": [
+      "Starting to catch on more, now understanding more when you say paint the picture you see.",
+      "Coffee + charts + chat. Tuesday energy.",
+      "Anyone in Houston this weekend? Pull up.",
+      "Mindset talk: what's your reset routine after a red day?",
+      "Small group, big accountability. Glad we keep it real here.",
+    ],
+    "tips-tricks": [
+      "Set alerts on your bias levels overnight — wake up to the levels, not the noise.",
+      "Trail half, runner targets PD high.",
+      "Don't trade greeks you don't understand.",
+      "Risk per trade BEFORE you click — never after.",
+      "Walk away after 2R red. Always.",
+    ],
+    "credit-building": [
+      "Got my score from 620 to 740 in 6 months. AMA.",
+      "Authorized user trick still works — pick the right card.",
+      "Pay the statement balance, not the minimum. Easy win.",
+      "Disputing inquiries — send the letters this week.",
+    ],
+    "opa-events": [
+      "Houston meetup this Saturday. RSVP in DM.",
+      "Live desk session tomorrow 9:15 CT.",
+      "End-of-month house dinner — invites going out.",
+      "Friday wrap-up call at 4 PM CT.",
+    ],
+    backtesting: [
+      "Ran 200 trades on the London sweep play — 62% win rate, 1.4 expectancy.",
+      "Posted my journal for last week. Feedback welcome.",
+      "Backtested 0DTE iron condors at 12d — too tight. 14d is the sweet spot.",
+      "Sample size matters. 30 trades is not a strategy.",
+    ],
+    "webinar-feedback": [
+      "Last night's webinar was 🔥. The order block walkthrough finally clicked.",
+      "Question on the 0DTE session: how do you size after a green day?",
+      "Replay link please?",
+      "Suggesting a deep-dive on prop firm risk rules.",
+    ],
+    "crypto-investing": [
+      "Long-term BTC bias still constructive. DCAing through the chop.",
+      "Watching SOL ecosystem narratives this cycle.",
+      "Funding rates flipping negative — short-term contrarian tell.",
+      "Stables on Coinbase still earning — set and forget.",
+    ],
     general: [
       "Morning everyone — coffee's on, charts are loaded.",
       "New here. Just picked up the lifetime — what's the best place to start?",
@@ -209,21 +293,8 @@ async function main() {
       "META: short strangle into earnings.",
       "GLD: long the 200ma retest.",
     ],
-    "ask-the-pros": [
-      "How do you size into a losing trade vs a new trade?",
-      "What book changed your approach the most?",
-      "Best platform for options + spot trading combined?",
-      "How do you journal your trades?",
-      "Do you trade during news?",
-      "When do you take a day off?",
-      "Preferred timeframe for swing trades?",
-      "How do you handle tilt after a loss?",
-      "Dan — what's your rule for adding to winners?",
-      "Priya — how do you pick strikes on 0DTE?",
-      "What routine do you follow pre-market?",
-    ],
   };
-  const names = ["Marcus", "Sara", "Dan", "Rachel", "Priya", "Noah", "Kwame", "Isabel", "Jordan", "Taylor", "Riley", "Quinn"];
+  const names = ["BillionairePrice", "Jacob", "Wyskii", "Marcus", "Sara", "Dan", "Rachel", "Priya", "Noah", "Kwame", "Isabel", "Jordan", "Taylor", "Riley", "Quinn"];
   let msgOffset = 0;
   for (const ch of channels) {
     const messages = chatSeed[ch] || [];

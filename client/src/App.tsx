@@ -16,6 +16,7 @@ import Library from "@/pages/Library";
 import VideoPlayer from "@/pages/VideoPlayer";
 import Webinars from "@/pages/Webinars";
 import Community from "@/pages/Community";
+import ChatPage from "@/pages/community/ChatPage";
 import ForumPost from "@/pages/community/ForumPost";
 import Shop from "@/pages/Shop";
 import Product from "@/pages/Product";
@@ -40,6 +41,7 @@ function AppRouter() {
       <Route path="/library/:id" component={VideoPlayer} />
       <Route path="/webinars" component={Webinars} />
       <Route path="/community" component={Community} />
+      <Route path="/community/chat" component={ChatPage} />
       <Route path="/community/forum/:id" component={ForumPost} />
       <Route path="/shop" component={Shop} />
       <Route path="/shop/checkout" component={ShopCheckout} />

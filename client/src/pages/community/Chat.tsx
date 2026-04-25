@@ -3,14 +3,19 @@ import { Send } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useSession } from "@/context/SessionContext";
 
+// Mirrors the real Telegram channels.
 const CHANNELS = [
-  { id: "general", label: "general" },
-  { id: "crypto", label: "crypto" },
-  { id: "forex", label: "forex" },
-  { id: "options", label: "options" },
-  { id: "wins", label: "wins" },
-  { id: "setups", label: "setups" },
-  { id: "ask-the-pros", label: "ask-the-pros" },
+  { id: "general", label: "General" },
+  { id: "trade-ideas", label: "Trade Ideas" },
+  { id: "profits", label: "Profits" },
+  { id: "digital-downloads", label: "Digital Downloads" },
+  { id: "organic-conversations", label: "Organic Conversations" },
+  { id: "tips-tricks", label: "Tips/Tricks" },
+  { id: "credit-building", label: "Credit Building / Repair" },
+  { id: "opa-events", label: "OPA Events" },
+  { id: "backtesting", label: "Backtesting" },
+  { id: "webinar-feedback", label: "Webinar Feedback" },
+  { id: "crypto-investing", label: "Crypto Investing" },
 ];
 
 type Msg = { id: number; channel: string; userId: number; userName: string; body: string; createdAt: number };

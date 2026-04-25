@@ -16,7 +16,7 @@ export function Navbar() {
 
   const links = [
     { href: "/academy", label: "Academy" },
-    { href: "/community", label: "The House" },
+    { href: "/community", label: "Community" },
     { href: "/shop", label: "Collection" },
     { href: "/pricing", label: "Membership" },
   ];

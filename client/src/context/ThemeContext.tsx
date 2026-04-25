@@ -4,7 +4,16 @@ type Theme = "dark" | "light";
 const Ctx = createContext<{ theme: Theme; toggle: () => void } | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
+  // Light is the default. We respect system preference only if it is explicitly dark on first load.
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "light";
+    try {
+      const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
+      return prefersDark ? "dark" : "light";
+    } catch {
+      return "light";
+    }
+  });
   useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") root.classList.add("dark");

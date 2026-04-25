@@ -57,6 +57,25 @@ export default function Dashboard() {
               <span className="text-muted-foreground">Paid in full</span>
             )}
           </div>
+
+          {/* Telegram invite note */}
+          {user.isMember && (
+            <div
+              className="mt-8 max-w-xl bg-card border border-[hsl(var(--brand-gold))] p-5 lg:p-6"
+              data-testid="card-telegram-note"
+            >
+              <p className="eyebrow mb-2">Welcome to the House</p>
+              <p className="text-[14.5px] leading-relaxed text-foreground/85">
+                Message the admin for your invite link after purchase — that's how
+                you get into the private Telegram and all 11 channels.
+              </p>
+              <Link href="/community" data-testid="link-telegram-from-dashboard">
+                <a className="mt-3 inline-flex items-center gap-2 mono text-[11px] uppercase tracking-[0.16em] text-[hsl(var(--brand-brown))] hover:text-foreground">
+                  See the channels →
+                </a>
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -165,7 +184,7 @@ export default function Dashboard() {
               <div className="divide-y divide-[hsl(var(--accent)/0.15)] border-y border-[hsl(var(--accent)/0.15)]">
                 {[
                   { href: "/library", label: "Video Library", icon: Video, sub: `${videosQ.data?.length ?? 0} sessions` },
-                  { href: "/community", label: "Community", icon: Users, sub: "Chat + Forum" },
+                  { href: "/community", label: "Community", icon: Users, sub: "11 Telegram channels" },
                   { href: "/shop", label: "The Collection", icon: Shirt, sub: "Members 15% off" },
                 ].map((q) => (
                   <Link key={q.href} href={q.href} data-testid={`link-quick-${q.label.toLowerCase().replace(/ /g, "-")}`}>
