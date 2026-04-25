@@ -72,7 +72,9 @@ export default function Community() {
 
               {isMember ? (
                 <a
-                  href="#telegram-link"
+                  href="https://t.me/+axrK-Xvted03ZDIx"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   data-telegram-cta="primary"
                   data-testid="link-join-telegram"
                   className="mt-8 inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-[hsl(var(--brand-deep-brown))] hover:text-[hsl(var(--brand-warm-white))] transition-colors h-12 px-8 rounded-none mono uppercase tracking-widest-editorial text-[11px] font-medium"
