@@ -170,7 +170,7 @@ export default function Landing() {
             {/* Left — copy */}
             <div className="lg:col-span-7 fade-up">
               <p className="eyebrow mb-7 text-accent">
-                ORGANIC PROFITS ACADEMY — HOUSTON, TX
+                ORGANIC PROFITS ACADEMY
               </p>
               <h1 className="display-hero">
                 <span className="block" style={{ fontWeight: 500 }}>

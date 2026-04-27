@@ -41,7 +41,6 @@ export function Footer() {
             <div className="eyebrow-subtle mb-5">Contact</div>
             <ul className="space-y-3 text-sm">
               <li><a href="mailto:support@organicprofits.com" className="hover:text-accent transition-colors">support@organicprofits.com</a></li>
-              <li className="text-muted-foreground">Houston, Texas</li>
             </ul>
             <div className="mt-5 flex gap-3">
               <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-accent transition-colors" data-testid="link-social-instagram"><Instagram size={16} strokeWidth={1.6} /></a>
@@ -54,7 +53,7 @@ export function Footer() {
         <div className="hairline my-14" />
 
         <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
-          <p className="eyebrow-subtle">© 2026 Organic Profits Academy. Cultivated in Houston.</p>
+          <p className="eyebrow-subtle">© 2026 Organic Profits Academy.</p>
           <p className="eyebrow-subtle max-w-md md:text-right">
             Trading involves risk of loss. Education, not financial advice.
           </p>
