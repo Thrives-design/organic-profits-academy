@@ -179,7 +179,7 @@ export default function Landing() {
                 <span className="block italic opacity-90">community.</span>
               </h1>
               <p className="mt-6 serif italic text-2xl md:text-[1.7rem] leading-snug text-foreground/80">
-                Real wins. Real homies.
+                Real wins. Real people.
               </p>
               <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
                 A private academy for disciplined traders across crypto, forex, and
