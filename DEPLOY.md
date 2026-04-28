@@ -2,7 +2,7 @@
 
 ## What's done
 
-- **Neon Postgres schema created & seeded** (24 videos, 7 webinars, 86 chat messages, 10 forum posts + 35 replies, 10 products, admin + demo member + payment plan)
+- **Neon Postgres schema created & seeded** (24 videos, 7 webinars, 86 chat messages, 10 forum posts + 35 replies, 10 products, admin user)
 - **Local prod build verified against Neon** — `/api/health`, `/api/videos`, `/api/auth/login`, `/api/admin/members` all return valid data
 - **Local git repo initialized** — 1 commit on `main`, no secrets or `node_modules` committed
 

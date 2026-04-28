@@ -22,39 +22,36 @@ async function main() {
   console.log("Seeding Neon database...");
   const now = Date.now();
 
-  const adminHash = await bcrypt.hash("admin123", 10);
-  const demoHash = await bcrypt.hash("demo1234", 10);
-
   // ---- Admin ----
-  await db.insert(users).values({
-    email: "admin@organicprofits.com",
-    password: adminHash,
-    name: "BillionairePrice",
-    isMember: true,
-    isAdmin: true,
-  });
+  // Admin password is set via the ADMIN_INITIAL_PASSWORD env var. If unset,
+  // a random one is generated and printed once to the console. The admin can
+  // change their password later via the admin panel.
+  const adminInitial =
+    process.env.ADMIN_INITIAL_PASSWORD ||
+    (() => {
+      const random = `OPA-${Math.random().toString(36).slice(2, 10)}-${Date.now().toString(36)}`;
+      console.log(`\n[seed] Generated initial admin password: ${random}`);
+      console.log("[seed] Save this NOW \u2014 it will not be shown again.\n");
+      return random;
+    })();
+  const adminHash = await bcrypt.hash(adminInitial, 10);
 
-  // ---- Demo member ----
-  const [demoMember] = await db
+  const [adminUser] = await db
     .insert(users)
     .values({
-      email: "demo@organicprofits.com",
-      password: demoHash,
-      name: "Demo Member",
+      email: "admin@organicprofits.com",
+      password: adminHash,
+      name: "BillionairePrice",
       isMember: true,
-      isAdmin: false,
+      isAdmin: true,
     })
     .returning();
 
-  await db.insert(paymentPlans).values({
-    userId: demoMember.id,
-    planType: "3mo",
-    totalAmount: 1100,
-    installmentAmount: 367,
-    totalInstallments: 3,
-    paidInstallments: 2,
-    nextChargeDate: new Date(Date.now() + 14 * 86400000).toISOString(),
-  });
+  // NOTE: Demo member account intentionally removed in production. Sample
+  // community/forum content below is authored by the admin user so the seed
+  // still produces a populated-looking community without exposing a public
+  // demo login.
+  const seedAuthor = adminUser;
 
   // ---- Videos — 3 niches: crypto, forex, options (~8 each = 24 total) ----
   const SAMPLE_MP4 =
@@ -301,7 +298,7 @@ async function main() {
     for (let i = 0; i < messages.length; i++) {
       await db.insert(chatMessages).values({
         channel: ch,
-        userId: demoMember.id,
+        userId: seedAuthor.id,
         userName: names[(i + msgOffset) % names.length],
         body: messages[i],
         createdAt: new Date(now - (messages.length - i) * 120000),
@@ -341,7 +338,7 @@ async function main() {
         title: p.title,
         body: p.body,
         category: p.category,
-        authorId: demoMember.id,
+        authorId: seedAuthor.id,
         authorName: p.author,
         upvotes: Math.floor(Math.random() * 40) + 3,
         createdAt: new Date(now - i * 3600_000),
@@ -352,7 +349,7 @@ async function main() {
     for (let r = 0; r < repliesCount; r++) {
       await db.insert(forumReplies).values({
         postId: post.id,
-        authorId: demoMember.id,
+        authorId: seedAuthor.id,
         authorName: names[(i + r) % names.length],
         body: replyBodies[(i + r) % replyBodies.length],
         createdAt: new Date(now - i * 3600_000 + (r + 1) * 600_000),
