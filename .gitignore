@@ -28,3 +28,4 @@ migrations/
 
 # vercel
 .vercel
+api/index.mjs
