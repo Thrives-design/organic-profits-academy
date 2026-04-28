@@ -52,11 +52,6 @@ export default function Login() {
             </p>
           </form>
 
-          <div className="mt-6 rounded-lg border border-accent/30 bg-accent/5 p-4 text-xs text-muted-foreground">
-            <p className="font-medium text-foreground mb-1.5">Demo accounts</p>
-            <p><span className="mono">admin@organicprofits.com</span> / admin123</p>
-            <p><span className="mono">demo@organicprofits.com</span> / demo1234</p>
-          </div>
         </div>
       </section>
     </Layout>

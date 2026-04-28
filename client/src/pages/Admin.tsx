@@ -23,7 +23,7 @@ export default function Admin() {
       <Layout>
         <div className="mx-auto max-w-2xl px-6 py-24 text-center">
           <h1 className="serif text-4xl">Admin access required</h1>
-          <p className="mt-3 text-muted-foreground">Sign in as admin@organicprofits.com / admin123.</p>
+          <p className="mt-3 text-muted-foreground">Sign in with your admin credentials to continue.</p>
           <Link href="/login"><Button className="mt-6 bg-primary">Sign in</Button></Link>
         </div>
       </Layout>
