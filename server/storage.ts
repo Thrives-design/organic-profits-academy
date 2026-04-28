@@ -39,6 +39,14 @@ export const storage = {
   },
   getPaymentPlanByUser: async (userId: number): Promise<PaymentPlan | undefined> =>
     first(await db.select().from(paymentPlans).where(eq(paymentPlans.userId, userId))),
+  getPaymentPlanBySessionId: async (sessionId: string): Promise<PaymentPlan | undefined> =>
+    first(await db.select().from(paymentPlans).where(eq(paymentPlans.stripeSessionId, sessionId))),
+  getPaymentPlanBySubscriptionId: async (subId: string): Promise<PaymentPlan | undefined> =>
+    first(await db.select().from(paymentPlans).where(eq(paymentPlans.stripeSubscriptionId, subId))),
+  updatePaymentPlan: async (id: number, patch: Partial<PaymentPlan>): Promise<PaymentPlan | undefined> => {
+    const rows = await db.update(paymentPlans).set(patch).where(eq(paymentPlans.id, id)).returning();
+    return rows[0];
+  },
   listPaymentPlans: async (): Promise<PaymentPlan[]> =>
     await db.select().from(paymentPlans),
 

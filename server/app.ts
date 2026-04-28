@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { registerStripeWebhook, registerStripeRoutes } from "./stripeRoutes";
 
 declare module "http" {
   interface IncomingMessage {
@@ -25,6 +26,10 @@ export function log(message: string, source = "express") {
  */
 export async function createApp() {
   const app = express();
+
+  // Stripe webhook MUST be registered BEFORE express.json() so that the raw body
+  // is available for signature verification. It uses express.raw() internally.
+  registerStripeWebhook(app);
 
   app.use(
     express.json({
@@ -61,6 +66,7 @@ export async function createApp() {
   });
 
   await registerRoutes(app);
+  registerStripeRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

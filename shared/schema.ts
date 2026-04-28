@@ -20,6 +20,7 @@ export const users = pgTable("users", {
   isAdmin: boolean("is_admin").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   lastWatchedVideoId: integer("last_watched_video_id"),
+  stripeCustomerId: text("stripe_customer_id"),
 });
 
 export const paymentPlans = pgTable("payment_plans", {
@@ -29,9 +30,13 @@ export const paymentPlans = pgTable("payment_plans", {
   totalAmount: doublePrecision("total_amount").notNull(),
   installmentAmount: doublePrecision("installment_amount").notNull(),
   totalInstallments: integer("total_installments").notNull(),
-  paidInstallments: integer("paid_installments").notNull().default(1),
+  paidInstallments: integer("paid_installments").notNull().default(0),
   nextChargeDate: text("next_charge_date"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  stripeSessionId: text("stripe_session_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  status: text("status").notNull().default("pending"), // pending, active, completed, canceled
 });
 
 export const videos = pgTable("videos", {

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { Layout } from "@/components/Layout";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,8 @@ export default function Checkout() {
   const search = typeof window !== "undefined" ? window.location.hash.split("?")[1] ?? "" : "";
   const qs = new URLSearchParams(search);
   const initialPlan = qs.get("plan") || "full";
+  const stripeSession = qs.get("stripe_session");
+  const canceled = qs.get("canceled") === "1";
   const { setSession } = useSession();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -24,13 +26,47 @@ export default function Checkout() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [card, setCard] = useState("");
-  const [exp, setExp] = useState("");
-  const [cvc, setCvc] = useState("");
-  const [zip, setZip] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [verifying, setVerifying] = useState(!!stripeSession);
 
   const plan = useMemo(() => PLANS.find((p) => p.id === planType)!, [planType]);
+
+  // If we returned from Stripe with a session ID, verify and log the user in
+  useEffect(() => {
+    if (!stripeSession) return;
+    (async () => {
+      try {
+        const res = await apiRequest("POST", "/api/stripe/verify-session", { sessionId: stripeSession });
+        const data = await res.json();
+        setAuthToken(data.token);
+        setSession(data.token, data.user);
+        toast({
+          title: "Welcome to the Academy",
+          description: "Your membership is active. Let's go.",
+        });
+        navigate("/dashboard");
+      } catch (err: any) {
+        toast({
+          title: "Could not verify payment",
+          description: err.message || "Please contact support.",
+          variant: "destructive",
+        });
+        setVerifying(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stripeSession]);
+
+  // Show a friendly notice if user came back from a canceled checkout
+  useEffect(() => {
+    if (canceled) {
+      toast({
+        title: "Checkout canceled",
+        description: "No worries — your spot is still here when you're ready.",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,19 +74,45 @@ export default function Checkout() {
       toast({ title: "Missing info", description: "Fill in name, email, and password.", variant: "destructive" });
       return;
     }
+    if (password.length < 8) {
+      toast({ title: "Password too short", description: "Use at least 8 characters.", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
     try {
-      const res = await apiRequest("POST", "/api/checkout/membership", {
+      const res = await apiRequest("POST", "/api/stripe/create-checkout-session", {
         name, email, password, planType,
       });
       const data = await res.json();
-      setAuthToken(data.token);
-      setSession(data.token, data.user);
-      toast({ title: "Welcome to the Academy", description: "Your lifetime membership is active." });
-      navigate("/dashboard");
+      if (!data.url) {
+        throw new Error("No checkout URL returned");
+      }
+      // Redirect to Stripe-hosted checkout
+      window.location.href = data.url;
     } catch (err: any) {
       toast({ title: "Checkout failed", description: err.message, variant: "destructive" });
-    } finally { setSubmitting(false); }
+      setSubmitting(false);
+    }
+  }
+
+  if (verifying) {
+    return (
+      <Layout hideFooter>
+        <section className="py-32">
+          <div className="mx-auto max-w-md px-6 text-center">
+            <Logo size={64} className="mx-auto mb-8" />
+            <p className="eyebrow mb-4">Confirming your payment</p>
+            <h1 className="serif text-3xl mb-4">Just a moment...</h1>
+            <p className="text-muted-foreground">
+              We're verifying your purchase with Stripe and setting up your account.
+            </p>
+            <div className="mt-8 inline-block h-2 w-12 bg-accent/20 overflow-hidden">
+              <div className="h-full w-1/3 bg-accent animate-[loading_1.2s_ease-in-out_infinite]" />
+            </div>
+          </div>
+        </section>
+      </Layout>
+    );
   }
 
   return (
@@ -89,7 +151,7 @@ export default function Checkout() {
 
               {/* Account */}
               <div>
-                <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-4">2. Create account</h2>
+                <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-4">2. Create your account</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name">Full name</Label>
@@ -101,41 +163,27 @@ export default function Checkout() {
                   </div>
                   <div className="sm:col-span-2">
                     <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required data-testid="input-password" />
+                    <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} data-testid="input-password" />
+                    <p className="text-xs text-muted-foreground mt-1">At least 8 characters. You'll use this to log in.</p>
                   </div>
                 </div>
               </div>
 
-              {/* Payment */}
-              <div>
-                <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-4 flex items-center gap-1.5">
-                  3. Payment <Lock size={11} className="text-muted-foreground" />
+              {/* Payment info notice */}
+              <div className="rounded-lg border border-card-border bg-card p-5">
+                <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-2 flex items-center gap-1.5">
+                  3. Secure payment <Lock size={11} className="text-muted-foreground" />
                 </h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="sm:col-span-2">
-                    <Label htmlFor="card">Card number</Label>
-                    <Input id="card" inputMode="numeric" placeholder="4242 4242 4242 4242" value={card} onChange={(e) => setCard(e.target.value)} required data-testid="input-card" />
-                  </div>
-                  <div>
-                    <Label htmlFor="exp">Expiration</Label>
-                    <Input id="exp" placeholder="MM / YY" value={exp} onChange={(e) => setExp(e.target.value)} required data-testid="input-exp" />
-                  </div>
-                  <div>
-                    <Label htmlFor="cvc">CVC</Label>
-                    <Input id="cvc" inputMode="numeric" placeholder="123" value={cvc} onChange={(e) => setCvc(e.target.value)} required data-testid="input-cvc" />
-                  </div>
-                  <div>
-                    <Label htmlFor="zip">ZIP</Label>
-                    <Input id="zip" inputMode="numeric" placeholder="90210" value={zip} onChange={(e) => setZip(e.target.value)} required data-testid="input-zip" />
-                  </div>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  Click below to continue to Stripe, our PCI-compliant payment processor. Your card details never touch our servers.
+                </p>
               </div>
 
               <Button type="submit" disabled={submitting} className="w-full h-12 bg-primary text-primary-foreground font-medium" data-testid="button-complete-purchase">
-                {submitting ? "Processing..." : `Complete Purchase — ${plan.amount}${plan.cadence}`}
+                {submitting ? "Redirecting to Stripe..." : `Continue to Payment — ${plan.amount}${plan.cadence}`}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
-                Secured checkout · 14-day money-back guarantee · Payments are simulated in this demo
+                Secured by Stripe · 14-day money-back guarantee
               </p>
             </form>
 
