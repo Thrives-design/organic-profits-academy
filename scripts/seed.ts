@@ -41,7 +41,7 @@ async function main() {
     .values({
       email: "admin@organicprofits.com",
       password: adminHash,
-      name: "BillionairePrice",
+      name: "OPA Founders",
       isMember: true,
       isAdmin: true,
     })

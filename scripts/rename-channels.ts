@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 
 /**
  * One-shot migration to align production data with the warm-light redesign:
- *  - Rename admin display name from "Admin" -> "BillionairePrice"
+ *  - Rename admin display name from "Admin" -> "OPA Founders"
  *  - Rename existing chat channel slugs to match the 11 real Telegram channels.
  *    For channels with no clean mapping, drop them so the UI stays clean.
  *
@@ -41,7 +41,7 @@ async function main() {
   console.log("Renaming admin display name…");
   const updated = await db
     .update(users)
-    .set({ name: "BillionairePrice" })
+    .set({ name: "OPA Founders" })
     .where(eq(users.email, "admin@organicprofits.com"))
     .returning();
   console.log(`  admin rows updated: ${updated.length}`);
