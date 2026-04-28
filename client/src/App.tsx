@@ -22,6 +22,9 @@ import Shop from "@/pages/Shop";
 import Product from "@/pages/Product";
 import ShopCheckout from "@/pages/ShopCheckout";
 import Admin from "@/pages/Admin";
+import Terms from "@/pages/legal/Terms";
+import Privacy from "@/pages/legal/Privacy";
+import RefundPolicy from "@/pages/legal/RefundPolicy";
 
 import { ThemeProvider } from "@/context/ThemeContext";
 import { SessionProvider } from "@/context/SessionContext";
@@ -47,6 +50,9 @@ function AppRouter() {
       <Route path="/shop/checkout" component={ShopCheckout} />
       <Route path="/shop/:id" component={Product} />
       <Route path="/admin" component={Admin} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/refund-policy" component={RefundPolicy} />
       <Route component={NotFound} />
     </Switch>
   );

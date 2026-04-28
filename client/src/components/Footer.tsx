@@ -7,8 +7,8 @@ export function Footer() {
     <footer className="bg-background">
       <div className="hairline" />
       <div className="mx-auto max-w-7xl px-6 py-20 lg:px-10">
-        <div className="grid grid-cols-2 gap-12 md:grid-cols-4">
-          <div className="col-span-2 md:col-span-1">
+        <div className="grid grid-cols-2 gap-12 md:grid-cols-6">
+          <div className="col-span-2 md:col-span-2">
             <Link href="/">
               <a className="flex items-center gap-2.5">
                 <Logo size={36} />
@@ -38,9 +38,17 @@ export function Footer() {
             </ul>
           </div>
           <div>
+            <div className="eyebrow-subtle mb-5">Legal</div>
+            <ul className="space-y-3 text-sm">
+              <li><Link href="/terms"><a className="hover:text-accent transition-colors" data-testid="link-terms">Terms of Service</a></Link></li>
+              <li><Link href="/privacy"><a className="hover:text-accent transition-colors" data-testid="link-privacy">Privacy Policy</a></Link></li>
+              <li><Link href="/refund-policy"><a className="hover:text-accent transition-colors" data-testid="link-refund">Refund Policy</a></Link></li>
+            </ul>
+          </div>
+          <div>
             <div className="eyebrow-subtle mb-5">Contact</div>
             <ul className="space-y-3 text-sm">
-              <li><a href="mailto:support@organicprofits.com" className="hover:text-accent transition-colors">support@organicprofits.com</a></li>
+              <li><a href="mailto:support@organicprofitsacademy.com" className="hover:text-accent transition-colors">support@organicprofitsacademy.com</a></li>
             </ul>
             <div className="mt-5 flex gap-3">
               <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-accent transition-colors" data-testid="link-social-instagram"><Instagram size={16} strokeWidth={1.6} /></a>
