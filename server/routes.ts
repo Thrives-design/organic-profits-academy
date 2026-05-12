@@ -132,6 +132,17 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
 
   // ===== PASSWORD RESET =====
   // Request a reset link. Always returns 200 (don't leak which emails exist).
+  // Debug: check whether RESEND_API_KEY env var is reaching the function.
+  // Returns only whether it's set + the first 6 chars (never the full key).
+  app.get("/api/_debug/email-env", (_req, res) => {
+    const k = process.env.RESEND_API_KEY;
+    res.json({
+      hasKey: !!k,
+      prefix: k ? k.slice(0, 6) : null,
+      length: k ? k.length : 0,
+    });
+  });
+
   app.post("/api/auth/forgot-password", async (req, res) => {
     try {
       const { email } = req.body ?? {};

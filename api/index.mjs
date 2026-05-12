@@ -49143,6 +49143,14 @@ async function registerRoutes(app, httpServer) {
     const plan = await storage.getPaymentPlanByUser(u.id);
     res.json({ user: publicUser(u), plan });
   });
+  app.get("/api/_debug/email-env", (_req, res) => {
+    const k = process.env.RESEND_API_KEY;
+    res.json({
+      hasKey: !!k,
+      prefix: k ? k.slice(0, 6) : null,
+      length: k ? k.length : 0
+    });
+  });
   app.post("/api/auth/forgot-password", async (req, res) => {
     try {
       const { email } = req.body ?? {};
