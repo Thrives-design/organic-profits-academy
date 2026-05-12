@@ -213,6 +213,41 @@ export function registerStripeRoutes(app: Express) {
   app.get("/api/stripe/config", (_req, res) => {
     res.json({ publishableKey: process.env.STRIPE_PUBLISHABLE_KEY ?? "" });
   });
+
+  // ----- Customer Portal -----
+  // Creates a Stripe Customer Portal session for the authed user so they can
+  // manage payment methods, view invoices, and (for installment subscriptions)
+  // cancel future installments themselves.
+  app.post("/api/stripe/portal", async (req, res) => {
+    try {
+      // Authenticate via the same Bearer token scheme used elsewhere.
+      const auth = req.header("authorization");
+      const token = auth ? auth.replace(/^Bearer\s+/i, "").trim() : "";
+      if (!token) return res.status(401).json({ error: "Not authenticated" });
+      const userId = await storage.getSessionUserId(token);
+      if (!userId) return res.status(401).json({ error: "Not authenticated" });
+      const user = await storage.getUser(userId);
+      if (!user) return res.status(404).json({ error: "User not found" });
+      if (!user.stripeCustomerId) {
+        return res
+          .status(400)
+          .json({ error: "No Stripe customer on file. Contact support if you believe this is an error." });
+      }
+
+      const origin = getOrigin(req);
+      const session = await stripe.billingPortal.sessions.create({
+        customer: user.stripeCustomerId,
+        return_url: `${origin}/#/dashboard`,
+      });
+
+      return res.json({ url: session.url });
+    } catch (e: any) {
+      console.error("[stripe] portal error:", e);
+      // Common cause: portal not configured in Stripe dashboard yet.
+      const msg = e?.raw?.message || e?.message || "Could not open billing portal";
+      return res.status(500).json({ error: msg });
+    }
+  });
 }
 
 /**

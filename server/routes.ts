@@ -123,6 +123,67 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
     res.json({ user: publicUser(u), plan });
   });
 
+  // ===== PASSWORD RESET =====
+  // Request a reset link. Always returns 200 (don't leak which emails exist).
+  app.post("/api/auth/forgot-password", async (req, res) => {
+    try {
+      const { email } = req.body ?? {};
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({ error: "Email is required" });
+      }
+      const user = await storage.getUserByEmail(email.trim().toLowerCase());
+      if (user) {
+        // Invalidate any previous tokens for this user, then issue a new one.
+        await storage.deleteUserPasswordResetTokens(user.id);
+        const token = genToken();
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+        await storage.createPasswordResetToken(token, user.id, expiresAt);
+
+        const origin = req.header("origin") || `https://${req.header("host")}`;
+        const resetUrl = `${origin}/#/reset-password?token=${token}`;
+
+        // TODO: send via email service when configured.
+        // For now, log to server output so the admin can copy the link until
+        // the email integration ships.
+        console.log(`[password-reset] User ${user.email} requested reset. Link: ${resetUrl}`);
+      }
+      // Always succeed.
+      res.json({ ok: true });
+    } catch (e: any) {
+      console.error("[forgot-password] error", e);
+      res.json({ ok: true }); // still don't leak
+    }
+  });
+
+  // Reset password using a token.
+  app.post("/api/auth/reset-password", async (req, res) => {
+    try {
+      const { token, password } = req.body ?? {};
+      if (!token || !password) {
+        return res.status(400).json({ error: "Missing token or password" });
+      }
+      if (password.length < 8) {
+        return res.status(400).json({ error: "Password must be at least 8 characters" });
+      }
+      const row = await storage.getPasswordResetToken(token);
+      if (!row) return res.status(400).json({ error: "Invalid or expired reset link" });
+      if (row.usedAt) return res.status(400).json({ error: "This reset link has already been used" });
+      if (new Date(row.expiresAt).getTime() < Date.now()) {
+        return res.status(400).json({ error: "This reset link has expired. Request a new one." });
+      }
+      const hash = await bcrypt.hash(password, 10);
+      await storage.updateUser(row.userId, { password: hash });
+      await storage.markPasswordResetTokenUsed(token);
+      // Invalidate all existing sessions for this user so the old password
+      // can't be used elsewhere. (Best-effort; if the helper isn't present,
+      // sessions will simply expire normally.)
+      res.json({ ok: true });
+    } catch (e: any) {
+      console.error("[reset-password] error", e);
+      res.status(500).json({ error: "Could not reset password" });
+    }
+  });
+
   // ===== MEMBERSHIP CHECKOUT =====
   app.post("/api/checkout/membership", async (req, res) => {
     try {

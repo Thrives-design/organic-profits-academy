@@ -5,12 +5,41 @@ import { useSession } from "@/context/SessionContext";
 import { NicheBadge } from "@/components/NicheBadge";
 import { VideoThumbnail } from "@/components/VideoThumbnail";
 import { Button } from "@/components/ui/button";
-import { CalendarPlus, ArrowRight, Video, Users, Shirt } from "lucide-react";
+import { CalendarPlus, ArrowRight, Video, Users, Shirt, CreditCard } from "lucide-react";
+import { useState } from "react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
   const { user, plan } = useSession();
+  const { toast } = useToast();
   const videosQ = useQuery<any[]>({ queryKey: ["/api/videos"] });
   const webinarsQ = useQuery<any[]>({ queryKey: ["/api/webinars"] });
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  async function openBillingPortal() {
+    setPortalLoading(true);
+    try {
+      const res = await apiRequest("POST", "/api/stripe/portal");
+      const data = await res.json();
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No portal URL returned");
+      }
+    } catch (err: any) {
+      const msg = (err?.message || "").replace(/^\d+:\s*/, "");
+      toast({
+        title: "Couldn't open billing portal",
+        description:
+          msg ||
+          "Try again in a moment, or email support@organicprofitsacademy.com.",
+        variant: "destructive",
+      });
+    } finally {
+      setPortalLoading(false);
+    }
+  }
 
   if (!user) {
     return (
@@ -202,6 +231,30 @@ export default function Dashboard() {
                     </a>
                   </Link>
                 ))}
+                {plan && (
+                  <button
+                    onClick={openBillingPortal}
+                    disabled={portalLoading}
+                    className="group flex w-full items-center gap-4 py-5 text-left disabled:opacity-50"
+                    data-testid="button-billing-portal"
+                  >
+                    <CreditCard size={16} className="text-accent shrink-0" strokeWidth={1.3} />
+                    <div className="flex-1 min-w-0">
+                      <p className="serif text-lg font-normal leading-tight group-hover:text-accent transition-colors">
+                        {portalLoading ? "Opening..." : "Manage billing"}
+                      </p>
+                      <p className="mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground mt-0.5">
+                        {plan.totalInstallments > 1
+                          ? "Update card · view receipts · cancel"
+                          : "Update card · view receipts"}
+                      </p>
+                    </div>
+                    <ArrowRight
+                      size={14}
+                      className="text-muted-foreground/50 group-hover:text-accent transition-colors"
+                    />
+                  </button>
+                )}
               </div>
             </aside>
           </div>

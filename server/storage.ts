@@ -1,5 +1,5 @@
 import {
-  users, videos, webinars, chatMessages, forumPosts, forumReplies, products, orders, paymentPlans, videoProgress, sessions,
+  users, videos, webinars, chatMessages, forumPosts, forumReplies, products, orders, paymentPlans, videoProgress, sessions, passwordResetTokens,
   type User, type InsertUser, type Video, type InsertVideo, type Webinar, type InsertWebinar,
   type ChatMessage, type InsertChatMessage, type ForumPost, type InsertForumPost,
   type ForumReply, type InsertForumReply, type Product, type InsertProduct,
@@ -164,5 +164,19 @@ export const storage = {
   },
   deleteSession: async (token: string): Promise<void> => {
     await db.delete(sessions).where(eq(sessions.token, token));
+  },
+
+  // ===== Password reset tokens =====
+  createPasswordResetToken: async (token: string, userId: number, expiresAt: Date): Promise<void> => {
+    await db.insert(passwordResetTokens).values({ token, userId, expiresAt });
+  },
+  getPasswordResetToken: async (token: string) => {
+    return first(await db.select().from(passwordResetTokens).where(eq(passwordResetTokens.token, token)));
+  },
+  markPasswordResetTokenUsed: async (token: string): Promise<void> => {
+    await db.update(passwordResetTokens).set({ usedAt: new Date() }).where(eq(passwordResetTokens.token, token));
+  },
+  deleteUserPasswordResetTokens: async (userId: number): Promise<void> => {
+    await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
   },
 };

@@ -24045,6 +24045,7 @@ __export(schema_exports, {
   insertVideoSchema: () => insertVideoSchema,
   insertWebinarSchema: () => insertWebinarSchema,
   orders: () => orders,
+  passwordResetTokens: () => passwordResetTokens,
   paymentPlans: () => paymentPlans,
   products: () => products,
   sessions: () => sessions,
@@ -35123,6 +35124,13 @@ var sessions = pgTable("sessions", {
   userId: integer("user_id").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 });
+var passwordResetTokens = pgTable("password_reset_tokens", {
+  token: text("token").primaryKey(),
+  userId: integer("user_id").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  usedAt: timestamp("used_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+});
 var insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -35544,6 +35552,19 @@ var storage = {
   },
   deleteSession: async (token) => {
     await db.delete(sessions).where(eq(sessions.token, token));
+  },
+  // ===== Password reset tokens =====
+  createPasswordResetToken: async (token, userId, expiresAt) => {
+    await db.insert(passwordResetTokens).values({ token, userId, expiresAt });
+  },
+  getPasswordResetToken: async (token) => {
+    return first(await db.select().from(passwordResetTokens).where(eq(passwordResetTokens.token, token)));
+  },
+  markPasswordResetTokenUsed: async (token) => {
+    await db.update(passwordResetTokens).set({ usedAt: /* @__PURE__ */ new Date() }).where(eq(passwordResetTokens.token, token));
+  },
+  deleteUserPasswordResetTokens: async (userId) => {
+    await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
   }
 };
 
@@ -35649,6 +35670,52 @@ async function registerRoutes(app, httpServer) {
     if (!u) return res.status(401).json({ error: "Not authenticated" });
     const plan = await storage.getPaymentPlanByUser(u.id);
     res.json({ user: publicUser(u), plan });
+  });
+  app.post("/api/auth/forgot-password", async (req, res) => {
+    try {
+      const { email } = req.body ?? {};
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({ error: "Email is required" });
+      }
+      const user = await storage.getUserByEmail(email.trim().toLowerCase());
+      if (user) {
+        await storage.deleteUserPasswordResetTokens(user.id);
+        const token = genToken();
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1e3);
+        await storage.createPasswordResetToken(token, user.id, expiresAt);
+        const origin = req.header("origin") || `https://${req.header("host")}`;
+        const resetUrl = `${origin}/#/reset-password?token=${token}`;
+        console.log(`[password-reset] User ${user.email} requested reset. Link: ${resetUrl}`);
+      }
+      res.json({ ok: true });
+    } catch (e) {
+      console.error("[forgot-password] error", e);
+      res.json({ ok: true });
+    }
+  });
+  app.post("/api/auth/reset-password", async (req, res) => {
+    try {
+      const { token, password } = req.body ?? {};
+      if (!token || !password) {
+        return res.status(400).json({ error: "Missing token or password" });
+      }
+      if (password.length < 8) {
+        return res.status(400).json({ error: "Password must be at least 8 characters" });
+      }
+      const row = await storage.getPasswordResetToken(token);
+      if (!row) return res.status(400).json({ error: "Invalid or expired reset link" });
+      if (row.usedAt) return res.status(400).json({ error: "This reset link has already been used" });
+      if (new Date(row.expiresAt).getTime() < Date.now()) {
+        return res.status(400).json({ error: "This reset link has expired. Request a new one." });
+      }
+      const hash = await bcrypt.hash(password, 10);
+      await storage.updateUser(row.userId, { password: hash });
+      await storage.markPasswordResetTokenUsed(token);
+      res.json({ ok: true });
+    } catch (e) {
+      console.error("[reset-password] error", e);
+      res.status(500).json({ error: "Could not reset password" });
+    }
   });
   app.post("/api/checkout/membership", async (req, res) => {
     try {
@@ -36009,6 +36076,30 @@ function registerStripeRoutes(app) {
   });
   app.get("/api/stripe/config", (_req, res) => {
     res.json({ publishableKey: process.env.STRIPE_PUBLISHABLE_KEY ?? "" });
+  });
+  app.post("/api/stripe/portal", async (req, res) => {
+    try {
+      const auth = req.header("authorization");
+      const token = auth ? auth.replace(/^Bearer\s+/i, "").trim() : "";
+      if (!token) return res.status(401).json({ error: "Not authenticated" });
+      const userId = await storage.getSessionUserId(token);
+      if (!userId) return res.status(401).json({ error: "Not authenticated" });
+      const user = await storage.getUser(userId);
+      if (!user) return res.status(404).json({ error: "User not found" });
+      if (!user.stripeCustomerId) {
+        return res.status(400).json({ error: "No Stripe customer on file. Contact support if you believe this is an error." });
+      }
+      const origin = getOrigin(req);
+      const session = await stripe.billingPortal.sessions.create({
+        customer: user.stripeCustomerId,
+        return_url: `${origin}/#/dashboard`
+      });
+      return res.json({ url: session.url });
+    } catch (e) {
+      console.error("[stripe] portal error:", e);
+      const msg = e?.raw?.message || e?.message || "Could not open billing portal";
+      return res.status(500).json({ error: msg });
+    }
   });
 }
 async function handleStripeEvent(event) {
