@@ -4,6 +4,10 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { stripe, STRIPE_PRICE_IDS, PLAN_CONFIG, type PlanId } from "./stripe";
 import { storage } from "./storage";
+import {
+  sendPurchaseConfirmationEmail,
+  sendPaymentFailedEmail,
+} from "./email";
 
 function genToken() {
   return crypto.randomBytes(32).toString("hex");
@@ -305,6 +309,37 @@ async function handleStripeEvent(event: any): Promise<void> {
           shipping: null as any,
           status: "paid",
         } as any);
+
+        // Send purchase confirmation email (fire-and-forget; never throws)
+        const planCfg = PLAN_CONFIG[planType as PlanId];
+        const amountPaid = (session.amount_total ?? 0) / 100;
+        const totalInstallments = planCfg?.iterations ?? 1;
+        const isInstallment = totalInstallments > 1;
+
+        // For installment plans, compute the next charge date (~1 month out)
+        // by looking up the subscription's current_period_end if available.
+        let nextChargeDate: string | null = null;
+        if (isInstallment && typeof session.subscription === "string") {
+          try {
+            const sub = await stripe.subscriptions.retrieve(session.subscription);
+            if (sub.current_period_end) {
+              nextChargeDate = new Date(sub.current_period_end * 1000).toISOString();
+            }
+          } catch (err) {
+            console.error("[stripe webhook] failed to fetch sub for nextChargeDate:", err);
+          }
+        }
+
+        await sendPurchaseConfirmationEmail({
+          to: user.email,
+          name: user.name || user.email,
+          planLabel: planCfg?.label ?? "Organic Profits Academy — Lifetime",
+          amountPaid,
+          totalAmount: planCfg?.totalAmount ?? amountPaid,
+          installmentNum: isInstallment ? 1 : undefined,
+          totalInstallments: isInstallment ? totalInstallments : undefined,
+          nextChargeDate,
+        });
       }
 
       console.log(`[stripe webhook] checkout completed for user ${userId} (${planType})`);
@@ -342,6 +377,31 @@ async function handleStripeEvent(event: any): Promise<void> {
         `[stripe webhook] invoice.paid for plan ${plan.id}: ${newCount}/${plan.totalInstallments}`,
       );
 
+      // Send installment-paid confirmation email
+      const installmentUser = await storage.getUser(plan.userId);
+      if (installmentUser) {
+        const planCfg = PLAN_CONFIG[plan.planType as PlanId];
+        const amountPaid = (invoice.amount_paid ?? 0) / 100;
+        let nextChargeDate: string | null = null;
+        if (!isFinal && invoice.lines?.data?.[0]?.period?.end) {
+          // Stripe sets the next charge ~1 month after this period ends
+          const periodEnd = invoice.lines.data[0].period.end;
+          if (typeof periodEnd === "number") {
+            nextChargeDate = new Date(periodEnd * 1000).toISOString();
+          }
+        }
+        await sendPurchaseConfirmationEmail({
+          to: installmentUser.email,
+          name: installmentUser.name || installmentUser.email,
+          planLabel: planCfg?.label ?? "Organic Profits Academy — Installment",
+          amountPaid: amountPaid || (planCfg?.installmentAmount ?? 0),
+          totalAmount: planCfg?.totalAmount ?? 1100,
+          installmentNum: newCount,
+          totalInstallments: plan.totalInstallments,
+          nextChargeDate,
+        });
+      }
+
       if (isFinal) {
         // Cancel the subscription so they aren't billed again
         try {
@@ -362,8 +422,26 @@ async function handleStripeEvent(event: any): Promise<void> {
       const subscriptionId = invoice.subscription;
       if (!subscriptionId || typeof subscriptionId !== "string") return;
       console.warn(`[stripe webhook] payment failed for subscription ${subscriptionId}`);
+
+      // Notify the customer so they can update their card before Stripe gives up
+      const plan = await storage.getPaymentPlanBySubscriptionId(subscriptionId);
+      if (plan) {
+        const user = await storage.getUser(plan.userId);
+        if (user) {
+          // The failed attempt is for the next unpaid installment
+          const failedNum = Math.min(
+            (plan.paidInstallments ?? 0) + 1,
+            plan.totalInstallments,
+          );
+          await sendPaymentFailedEmail({
+            to: user.email,
+            name: user.name || user.email,
+            installmentNum: failedNum,
+            totalInstallments: plan.totalInstallments,
+          });
+        }
+      }
       // Stripe will retry automatically per dunning settings.
-      // Could email the customer here.
       break;
     }
 

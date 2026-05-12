@@ -8,6 +8,7 @@ import {
 } from "@shared/schema";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
+import { sendWelcomeEmail, sendPasswordResetEmail } from "./email";
 
 function genToken() {
   return crypto.randomBytes(32).toString("hex");
@@ -81,6 +82,12 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
       const u = await storage.createUser({ ...parsed, password: hashed });
       const token = genToken();
       await storage.createSession(token, u.id);
+
+      // Welcome email (fire-and-forget so signup never waits on email).
+      sendWelcomeEmail({ to: u.email, name: u.name }).catch((err) =>
+        console.error("[welcome email]", err),
+      );
+
       res.json({ token, user: publicUser(u) });
     } catch (e: any) {
       res.status(400).json({ error: e.message || "Invalid signup" });
@@ -139,13 +146,20 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
         const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
         await storage.createPasswordResetToken(token, user.id, expiresAt);
 
-        const origin = req.header("origin") || `https://${req.header("host")}`;
+        const origin = process.env.PUBLIC_BASE_URL
+          || req.header("origin")
+          || `https://${req.header("host")}`;
         const resetUrl = `${origin}/#/reset-password?token=${token}`;
 
-        // TODO: send via email service when configured.
-        // For now, log to server output so the admin can copy the link until
-        // the email integration ships.
-        console.log(`[password-reset] User ${user.email} requested reset. Link: ${resetUrl}`);
+        // Send the reset email. Fire-and-forget so a slow email provider
+        // never blocks the response (and we don't leak success/failure).
+        sendPasswordResetEmail({
+          to: user.email,
+          name: user.name,
+          resetUrl,
+        }).catch((err) => console.error("[password-reset email]", err));
+
+        console.log(`[password-reset] Sent reset link to ${user.email}`);
       }
       // Always succeed.
       res.json({ ok: true });
