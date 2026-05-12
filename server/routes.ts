@@ -83,10 +83,9 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
       const token = genToken();
       await storage.createSession(token, u.id);
 
-      // Welcome email (fire-and-forget so signup never waits on email).
-      sendWelcomeEmail({ to: u.email, name: u.name }).catch((err) =>
-        console.error("[welcome email]", err),
-      );
+      // Welcome email. Awaited because Vercel serverless terminates pending
+      // promises once the response is sent. The send() helper never throws.
+      await sendWelcomeEmail({ to: u.email, name: u.name });
 
       res.json({ token, user: publicUser(u) });
     } catch (e: any) {
@@ -132,37 +131,6 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
 
   // ===== PASSWORD RESET =====
   // Request a reset link. Always returns 200 (don't leak which emails exist).
-  // Debug: check whether RESEND_API_KEY env var is reaching the function.
-  // Returns only whether it's set + the first 6 chars (never the full key).
-  app.get("/api/_debug/email-env", (_req, res) => {
-    const k = process.env.RESEND_API_KEY;
-    res.json({
-      hasKey: !!k,
-      prefix: k ? k.slice(0, 6) : null,
-      length: k ? k.length : 0,
-    });
-  });
-
-  // Debug: directly attempt to send a test email and return the Resend response.
-  app.get("/api/_debug/email-send", async (_req, res) => {
-    const k = process.env.RESEND_API_KEY;
-    if (!k) return res.json({ error: "no key" });
-    try {
-      const { Resend } = await import("resend");
-      const r = new Resend(k);
-      const result = await r.emails.send({
-        from: "Organic Profits Academy <support@organicprofitsacademy.com>",
-        to: "thrive8ways@icloud.com",
-        subject: "OPA debug send (from Vercel function)",
-        html: "<p>This email was sent directly from the Vercel function as a debug test.</p>",
-        text: "This email was sent directly from the Vercel function as a debug test.",
-      });
-      res.json({ ok: true, result });
-    } catch (e: any) {
-      res.json({ ok: false, error: e?.message ?? String(e), stack: e?.stack });
-    }
-  });
-
   app.post("/api/auth/forgot-password", async (req, res) => {
     try {
       const { email } = req.body ?? {};
@@ -182,13 +150,15 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
           || `https://${req.header("host")}`;
         const resetUrl = `${origin}/#/reset-password?token=${token}`;
 
-        // Send the reset email. Fire-and-forget so a slow email provider
-        // never blocks the response (and we don't leak success/failure).
-        sendPasswordResetEmail({
+        // Send the reset email. We AWAIT here because on Vercel serverless
+        // functions, pending promises are killed when the response is sent
+        // (no background work after res.json()). The send() helper has its
+        // own try/catch and never throws, so this is safe.
+        await sendPasswordResetEmail({
           to: user.email,
           name: user.name,
           resetUrl,
-        }).catch((err) => console.error("[password-reset email]", err));
+        });
 
         console.log(`[password-reset] Sent reset link to ${user.email}`);
       }
