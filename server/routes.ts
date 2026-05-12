@@ -143,6 +143,26 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
     });
   });
 
+  // Debug: directly attempt to send a test email and return the Resend response.
+  app.get("/api/_debug/email-send", async (_req, res) => {
+    const k = process.env.RESEND_API_KEY;
+    if (!k) return res.json({ error: "no key" });
+    try {
+      const { Resend } = await import("resend");
+      const r = new Resend(k);
+      const result = await r.emails.send({
+        from: "Organic Profits Academy <support@organicprofitsacademy.com>",
+        to: "thrive8ways@icloud.com",
+        subject: "OPA debug send (from Vercel function)",
+        html: "<p>This email was sent directly from the Vercel function as a debug test.</p>",
+        text: "This email was sent directly from the Vercel function as a debug test.",
+      });
+      res.json({ ok: true, result });
+    } catch (e: any) {
+      res.json({ ok: false, error: e?.message ?? String(e), stack: e?.stack });
+    }
+  });
+
   app.post("/api/auth/forgot-password", async (req, res) => {
     try {
       const { email } = req.body ?? {};
