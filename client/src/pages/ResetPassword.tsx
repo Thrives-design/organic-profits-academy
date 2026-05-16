@@ -25,11 +25,20 @@ export default function ResetPassword() {
     //                                                  reset-password.html which
     //                                                  forwards into the SPA)
     const tryGetToken = () => {
-      // Check standard query string first.
+      // 1. Pre-React URL normalizer in index.html may have stashed the hash
+      //    query string here.
+      const stashed = (window as any).__hashQuery as string | undefined;
+      if (stashed) {
+        const params = new URLSearchParams(stashed);
+        const t = params.get("token");
+        if (t) return t;
+      }
+      // 2. Standard query string (when the page is loaded without a hash,
+      //    e.g. /reset-password?token=...).
       const searchParams = new URLSearchParams(window.location.search || "");
       let t = searchParams.get("token");
       if (t) return t;
-      // Fall back to the hash portion.
+      // 3. Fall back to parsing the hash directly (defensive).
       const hash = window.location.hash || "";
       const queryStart = hash.indexOf("?");
       if (queryStart >= 0) {

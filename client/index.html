@@ -58,6 +58,33 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Pre-React URL normalization.
+      // Wouter's hash router treats query strings inside the hash as part of
+      // the path, so URLs like /#/reset-password?token=abc don't match the
+      // /reset-password route. Pull any query string out of the hash, store
+      // its params on window so React can read them, then rewrite the hash
+      // so the path matches cleanly.
+      (function () {
+        try {
+          var hash = window.location.hash || "";
+          if (hash.length > 1) {
+            var qIdx = hash.indexOf("?");
+            if (qIdx >= 0) {
+              var pathPart = hash.slice(0, qIdx);
+              var queryPart = hash.slice(qIdx + 1);
+              window.__hashQuery = queryPart;
+              // Rewrite without firing a reload.
+              window.history.replaceState(
+                null,
+                "",
+                window.location.pathname + window.location.search + pathPart
+              );
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
