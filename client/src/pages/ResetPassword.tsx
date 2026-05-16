@@ -17,15 +17,30 @@ export default function ResetPassword() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    // Token is in the URL query string after the hash: /#/reset-password?token=...
-    // wouter's useLocation gives us only the hash path, so read from window.location.hash.
-    const hash = window.location.hash || "";
-    const queryStart = hash.indexOf("?");
-    if (queryStart >= 0) {
-      const params = new URLSearchParams(hash.slice(queryStart + 1));
-      const t = params.get("token");
-      if (t) setToken(t);
-    }
+    // Token can arrive in two places depending on whether the email client
+    // preserved the URL fragment:
+    //   1. Hash route:  /#/reset-password?token=...  -> read from window.location.hash
+    //   2. Bare path:   /reset-password?token=...    -> read from window.location.search
+    //                                                  (handled by the static
+    //                                                  reset-password.html which
+    //                                                  forwards into the SPA)
+    const tryGetToken = () => {
+      // Check standard query string first.
+      const searchParams = new URLSearchParams(window.location.search || "");
+      let t = searchParams.get("token");
+      if (t) return t;
+      // Fall back to the hash portion.
+      const hash = window.location.hash || "";
+      const queryStart = hash.indexOf("?");
+      if (queryStart >= 0) {
+        const params = new URLSearchParams(hash.slice(queryStart + 1));
+        t = params.get("token");
+        if (t) return t;
+      }
+      return null;
+    };
+    const t = tryGetToken();
+    if (t) setToken(t);
   }, []);
 
   async function onSubmit(e: React.FormEvent) {

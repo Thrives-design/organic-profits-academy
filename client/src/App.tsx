@@ -112,6 +112,8 @@ function AppRouter() {
       <Route path="/refund-policy" component={RefundPolicy} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
+      {/* Wouter's hash router treats the query string as part of the path, so /reset-password?token=... won't match the bare /reset-password route. Add a wildcard catch so it works either way. */}
+      <Route path="/reset-password/:rest*" component={ResetPassword} />
       <Route component={NotFound} />
     </Switch>
   );
