@@ -40,6 +40,11 @@ export default function Checkout() {
         const data = await res.json();
         setAuthToken(data.token);
         setSession(data.token, data.user);
+        // Track the conversion — use the plan returned by the server (most accurate)
+        try {
+          const planLabel = data?.planType || planType || "unknown";
+          (await import("@/lib/analytics")).trackPurchaseCompleted(planLabel);
+        } catch {}
         toast({
           title: "Welcome to the Academy",
           description: "Your membership is active. Let's go.",
@@ -87,6 +92,8 @@ export default function Checkout() {
       if (!data.url) {
         throw new Error("No checkout URL returned");
       }
+      // Track conversion event before redirect
+      try { (await import("@/lib/analytics")).trackCheckoutStarted(planType); } catch {}
       // Redirect to Stripe-hosted checkout
       window.location.href = data.url;
     } catch (err: any) {

@@ -16,6 +16,7 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       await apiRequest("POST", "/api/auth/forgot-password", { email });
+      try { (await import("@/lib/analytics")).trackForgotPasswordRequested(); } catch {}
       setSent(true);
     } catch {
       // We intentionally show the same success state either way so we don't

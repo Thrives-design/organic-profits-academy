@@ -65,6 +65,7 @@ export default function ResetPassword() {
     setLoading(true);
     try {
       await apiRequest("POST", "/api/auth/reset-password", { token, password });
+      try { (await import("@/lib/analytics")).trackPasswordReset(); } catch {}
       setDone(true);
       setTimeout(() => navigate("/login"), 2500);
     } catch (err: any) {

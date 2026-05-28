@@ -58,6 +58,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       setAuthToken(data.token);
       setUser(data.user);
       await refresh();
+      try { (await import("@/lib/analytics")).trackLogin(); } catch {}
     } finally { setLoading(false); }
   }
 
@@ -68,6 +69,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       const data = await res.json();
       setAuthToken(data.token);
       setUser(data.user);
+      try { (await import("@/lib/analytics")).trackSignup(); } catch {}
     } finally { setLoading(false); }
   }
 
