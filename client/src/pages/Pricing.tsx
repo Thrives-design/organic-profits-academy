@@ -1,94 +1,175 @@
-import { useState } from "react";
 import { useLocation } from "wouter";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
+import { Reveal } from "@/components/Reveal";
+import { Check } from "lucide-react";
 
+// Single monthly plan — $600/month recurring
 export const PLANS = [
-  { id: "full", label: "Pay in full", sub: "Best value",      amount: "$1,100", cadence: "today",      installments: 1, installmentAmount: 1100 },
-  { id: "2mo",  label: "2 months",    sub: "Split in two",    amount: "$550",   cadence: "× 2 months", installments: 2, installmentAmount: 550 },
-  { id: "3mo",  label: "3 months",    sub: "Most flexible",   amount: "$367",   cadence: "× 3 months", installments: 3, installmentAmount: 367 },
-  { id: "4mo",  label: "4 months",    sub: "Lowest monthly",  amount: "$275",   cadence: "× 4 months", installments: 4, installmentAmount: 275 },
+  {
+    id: "monthly",
+    label: "Monthly Membership",
+    sub: "Cancel anytime",
+    amount: "$600",
+    cadence: "/ month",
+    installments: 1,
+    installmentAmount: 600,
+  },
+];
+
+const INCLUDES = [
+  "40+ on-demand webinars (crypto, forex, options)",
+  "New webinars added every week",
+  "Live desk sessions with Byron",
+  "11-channel private Telegram house",
+  "Trade Ideas, Profits & Events channels",
+  "Digital resources: PDFs, backtests, templates",
+  "Direct access to Byron via Telegram",
+  "All future content included at no extra cost",
+  "7-day money-back guarantee",
+  "Cancel before your next billing date — no penalty",
+];
+
+const WHY = [
+  {
+    q: "Why $600/month?",
+    a: "Most traders spend more on subscriptions, courses, and tools that never pay off. $600/month gets you everything — live sessions, the full webinar library, a real community, and direct mentor access — in one place. That's the edge serious traders pay for.",
+  },
+  {
+    q: "What happens after I sign up?",
+    a: "You get immediate access to your member dashboard, the full video library, and a direct Telegram invite to the private house. You're in the community within minutes.",
+  },
+  {
+    q: "Is there a commitment?",
+    a: "None. Cancel before your next billing date and you won't be charged again. But most members stay — because the community is where the real growth happens.",
+  },
 ];
 
 export default function Pricing() {
   const [, navigate] = useLocation();
-  const [planId, setPlanId] = useState("full");
-  const current = PLANS.find((p) => p.id === planId)!;
+
   return (
     <Layout>
-      <section className="py-28 lg:py-36">
+      {/* ==================== HERO ==================== */}
+      <section className="py-28 lg:py-36" data-testid="section-pricing-hero">
         <div className="mx-auto max-w-xl px-6 lg:px-10 text-center">
-          <p className="eyebrow mb-6">Lifetime Membership</p>
+          <p className="eyebrow mb-6">Monthly Membership</p>
           <h1 className="display-xl serif">
-            $1,100.<br />
-            <span className="italic">Once. Forever.</span>
+            $600/month.<br />
+            <span className="italic">Everything included.</span>
           </h1>
-          <p className="mt-8 text-muted-foreground leading-relaxed">
-            Pick the payment cadence that suits you. Each plan totals the same $1,100 — no interest, no credit check.
+          <p className="mt-8 text-muted-foreground leading-relaxed max-w-md mx-auto">
+            One flat rate. All three markets. Live sessions, the full webinar library,
+            and a community that holds you accountable. No tiers. No upsells.
           </p>
         </div>
 
+        {/* Pricing Card */}
         <div className="mx-auto max-w-lg px-6 mt-16">
-          <div className="border border-accent bg-card p-10 md:p-12">
-            <div className="eyebrow mb-4">Lifetime Membership</div>
-            <div className="serif text-6xl md:text-7xl tracking-tight" style={{ fontWeight: 400 }}>$1,100</div>
-            <p className="mt-3 text-sm text-muted-foreground">One payment. Perpetual access.</p>
+          <Reveal>
+            <div className="border border-[hsl(var(--brand-gold))] bg-card p-10 md:p-12">
+              <div className="eyebrow mb-4">Organic Profits Academy</div>
+              <div className="flex items-baseline gap-3">
+                <div className="serif text-6xl md:text-7xl tracking-tight" style={{ fontWeight: 400 }}>
+                  $600
+                </div>
+                <span className="mono text-[12px] uppercase tracking-widest-editorial text-muted-foreground">
+                  / month
+                </span>
+              </div>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Billed monthly. Cancel anytime before your next billing date.
+              </p>
 
-            <div className="hairline my-10" />
+              <div className="hairline my-10" />
 
-            <div className="space-y-1 text-left">
-              {PLANS.map((p) => {
-                const active = planId === p.id;
-                return (
-                  <button
-                    key={p.id}
-                    onClick={() => setPlanId(p.id)}
-                    className={`w-full flex items-center justify-between py-4 px-2 transition-colors ${active ? "bg-accent/5" : ""}`}
-                    data-testid={`plan-${p.id}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className={`h-3 w-3 border transition-colors ${active ? "bg-accent border-accent" : "border-accent/50"}`} />
-                      <span className="mono uppercase tracking-wider-editorial text-[11px]">{p.label}</span>
-                    </div>
-                    <span className="mono text-[11px] text-muted-foreground uppercase tracking-wider-editorial">
-                      {p.amount} {p.cadence}
-                    </span>
-                  </button>
-                );
-              })}
+              <div className="space-y-3 text-left">
+                {INCLUDES.map((item) => (
+                  <div key={item} className="flex items-start gap-3">
+                    <Check
+                      size={14}
+                      className="text-[hsl(var(--brand-green))] shrink-0 mt-0.5"
+                      strokeWidth={2.5}
+                    />
+                    <span className="text-[14px] leading-relaxed text-foreground">{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Button
+                onClick={() => navigate("/checkout?plan=monthly")}
+                size="lg"
+                className="mt-10 w-full bg-primary text-primary-foreground hover:bg-[hsl(var(--brand-deep-brown))] hover:text-[hsl(var(--brand-warm-white))] transition-colors h-12 rounded-none mono uppercase tracking-widest-editorial text-[11px] font-medium"
+                data-testid="button-join"
+              >
+                Start Today — $600/month
+              </Button>
+
+              <p className="mt-4 text-center text-[12px] text-muted-foreground mono">
+                Secure checkout. Cancel anytime. 7-day guarantee.
+              </p>
             </div>
+          </Reveal>
+        </div>
+      </section>
 
-            <Button
-              onClick={() => navigate(`/checkout?plan=${current.id}`)}
-              size="lg"
-              className="mt-10 w-full bg-primary text-primary-foreground hover:bg-[hsl(89_48%_46%)] hover:text-[hsl(207_54%_8%)] transition-colors h-12 rounded-none mono uppercase tracking-widest-editorial text-[11px] font-medium"
-              data-testid="button-reserve"
-            >
-              Reserve Your Spot
-            </Button>
+      <div className="hairline" />
 
-            <p className="eyebrow-subtle mt-6">14-day money-back guarantee</p>
+      {/* ==================== WHY SECTION ==================== */}
+      <section className="py-20 lg:py-24 bg-[hsl(var(--brand-silver-cream))]" data-testid="section-why">
+        <div className="mx-auto max-w-3xl px-6 lg:px-10">
+          <Reveal>
+            <p className="eyebrow mb-6">The honest answers</p>
+            <h2 className="display-xl serif mb-14">
+              Before you <span className="italic">decide.</span>
+            </h2>
+          </Reveal>
+
+          <div className="space-y-10">
+            {WHY.map((w, i) => (
+              <Reveal key={i} delay={i * 60}>
+                <div className="lg:grid lg:grid-cols-12 lg:gap-12" data-testid={`why-${i}`}>
+                  <div className="lg:col-span-5 mb-3 lg:mb-0">
+                    <h3 className="serif text-xl md:text-2xl" style={{ fontWeight: 400 }}>
+                      {w.q}
+                    </h3>
+                  </div>
+                  <div className="lg:col-span-7">
+                    <p className="text-[15px] leading-relaxed text-muted-foreground">{w.a}</p>
+                  </div>
+                </div>
+                {i < WHY.length - 1 && <div className="hairline mt-10" />}
+              </Reveal>
+            ))}
           </div>
         </div>
+      </section>
 
-        <div className="mx-auto max-w-3xl px-6 mt-24">
-          <div className="hairline mb-12" />
-          <p className="eyebrow mb-6">What's included</p>
-          <ul className="grid gap-x-10 gap-y-3 md:grid-cols-2 text-[15px]">
-            {[
-              "Full video library across crypto, forex, options",
-              "Weekday live desk sessions + weekly deep-dives",
-              "Private community chat + forum access",
-              "Priority feature requests + instructor AMAs",
-              "15% off the full merchandise line",
-              "14-day money-back guarantee",
-            ].map((i) => (
-              <li key={i} className="flex items-start gap-3 py-2 hairline-bottom">
-                <span className="eyebrow text-accent mt-1">—</span>
-                <span>{i}</span>
-              </li>
-            ))}
-          </ul>
+      <div className="hairline" />
+
+      {/* ==================== FINAL CTA ==================== */}
+      <section className="py-20 lg:py-24" data-testid="section-final-cta">
+        <div className="mx-auto max-w-lg px-6 text-center">
+          <Reveal>
+            <h2 className="serif text-3xl md:text-4xl" style={{ fontWeight: 400 }}>
+              Your edge is one month away.
+            </h2>
+            <p className="mt-5 text-[15px] text-muted-foreground leading-relaxed">
+              27+ traders are already inside OPA. Live sessions happen every week.
+              The community is active every day.
+            </p>
+            <Button
+              onClick={() => navigate("/checkout?plan=monthly")}
+              size="lg"
+              className="mt-10 bg-primary text-primary-foreground h-12 px-10 rounded-none mono uppercase tracking-widest-editorial text-[11px] font-medium hover:bg-[hsl(var(--brand-deep-brown))] hover:text-[hsl(var(--brand-warm-white))] transition-colors"
+              data-testid="button-final-cta"
+            >
+              Join the Academy — $600/month
+            </Button>
+            <p className="mt-4 text-[12px] text-muted-foreground mono">
+              Cancel anytime. 7-day money-back guarantee.
+            </p>
+          </Reveal>
         </div>
       </section>
     </Layout>

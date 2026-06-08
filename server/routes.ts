@@ -1,6 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
+import rateLimit from "express-rate-limit";
 import { storage } from "./storage";
 import {
   insertUserSchema, insertForumPostSchema, insertForumReplySchema,
@@ -73,7 +74,15 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
   });
 
   // ===== AUTH =====
-  app.post("/api/auth/signup", async (req, res) => {
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many requests, please try again later." },
+  });
+
+  app.post("/api/auth/signup", authLimiter, async (req, res) => {
     try {
       const parsed = insertUserSchema.parse(req.body);
       const existing = await storage.getUserByEmail(parsed.email);
@@ -93,7 +102,7 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
     }
   });
 
-  app.post("/api/auth/login", async (req, res) => {
+  app.post("/api/auth/login", authLimiter, async (req, res) => {
     try {
       const { email, password } = req.body ?? {};
       if (!email || !password) return res.status(400).json({ error: "Email and password required" });
@@ -131,7 +140,7 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
 
   // ===== PASSWORD RESET =====
   // Request a reset link. Always returns 200 (don't leak which emails exist).
-  app.post("/api/auth/forgot-password", async (req, res) => {
+  app.post("/api/auth/forgot-password", authLimiter, async (req, res) => {
     try {
       const { email } = req.body ?? {};
       if (!email || typeof email !== "string") {
@@ -199,65 +208,14 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
     }
   });
 
-  // ===== MEMBERSHIP CHECKOUT =====
-  app.post("/api/checkout/membership", async (req, res) => {
-    try {
-      const { name, email, password, planType } = req.body ?? {};
-      if (!name || !email || !password || !planType) {
-        return res.status(400).json({ error: "Missing required fields" });
-      }
-      const plans: Record<string, { installments: number; amount: number }> = {
-        full: { installments: 1, amount: 1100 },
-        "2mo": { installments: 2, amount: 550 },
-        "3mo": { installments: 3, amount: 367 },
-        "4mo": { installments: 4, amount: 275 },
-      };
-      const cfg = plans[planType];
-      if (!cfg) return res.status(400).json({ error: "Invalid plan" });
-
-      let user = await storage.getUserByEmail(email);
-      if (user) {
-        user = await storage.updateUser(user.id, { isMember: true, name });
-      } else {
-        const hashed = await bcrypt.hash(password, 10);
-        user = await storage.createUser({ name, email, password: hashed } as any);
-        user = await storage.updateUser(user!.id, { isMember: true });
-      }
-      const nextCharge = cfg.installments > 1 ? new Date(Date.now() + 30 * 86400000).toISOString() : null;
-      await storage.createPaymentPlan({
-        userId: user!.id,
-        planType,
-        totalAmount: 1100,
-        installmentAmount: cfg.amount,
-        totalInstallments: cfg.installments,
-        paidInstallments: 1,
-        nextChargeDate: nextCharge,
-      } as any);
-
-      await storage.createOrder({
-        orderNumber: "OP-" + Date.now().toString(36).toUpperCase(),
-        userId: user!.id,
-        email,
-        type: "membership",
-        items: [{ name: "Lifetime Access", planType, amount: cfg.amount }] as any,
-        subtotal: cfg.amount,
-        shipping: null as any,
-        status: "processing",
-      } as any);
-
-      const token = genToken();
-      await storage.createSession(token, user!.id);
-      res.json({ token, user: publicUser(user) });
-    } catch (e: any) {
-      res.status(500).json({ error: e.message });
-    }
-  });
+  // NOTE: /api/checkout/membership legacy stub removed — membership is granted
+  // exclusively via Stripe webhook (customer.subscription.created / invoice.paid).
 
   // ===== VIDEOS =====
-  app.get("/api/videos", async (_req, res) => {
+  app.get("/api/videos", requireMember, async (req: any, res) => {
     res.json(await storage.listVideos());
   });
-  app.get("/api/videos/:id", async (req, res) => {
+  app.get("/api/videos/:id", requireMember, async (req: any, res) => {
     const v = await storage.getVideo(Number(req.params.id));
     if (!v) return res.status(404).json({ error: "Not found" });
     res.json(v);

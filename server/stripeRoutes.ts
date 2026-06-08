@@ -21,12 +21,11 @@ function publicUser(u: any) {
 
 /**
  * Get the public origin for redirect URLs.
- * Priority: PUBLIC_BASE_URL env var → request Origin header → default to live domain.
+ * Uses PUBLIC_BASE_URL env var if set, otherwise falls back to the live domain.
+ * Never trusts the request Origin header to prevent open-redirect abuse.
  */
-function getOrigin(req: Request): string {
+function getOrigin(_req: Request): string {
   if (process.env.PUBLIC_BASE_URL) return process.env.PUBLIC_BASE_URL;
-  const origin = req.header("origin");
-  if (origin) return origin;
   return "https://organicprofitsacademy.com";
 }
 

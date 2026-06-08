@@ -49199,10 +49199,7 @@ async function registerRoutes(app, httpServer) {
         return res.status(400).json({ error: "Missing required fields" });
       }
       const plans = {
-        full: { installments: 1, amount: 1100 },
-        "2mo": { installments: 2, amount: 550 },
-        "3mo": { installments: 3, amount: 367 },
-        "4mo": { installments: 4, amount: 275 }
+        monthly: { installments: 1, amount: 600 }
       };
       const cfg = plans[planType];
       if (!cfg) return res.status(400).json({ error: "Invalid plan" });
@@ -49218,7 +49215,7 @@ async function registerRoutes(app, httpServer) {
       await storage.createPaymentPlan({
         userId: user.id,
         planType,
-        totalAmount: 1100,
+        totalAmount: cfg.amount,
         installmentAmount: cfg.amount,
         totalInstallments: cfg.installments,
         paidInstallments: 1,
@@ -49229,7 +49226,7 @@ async function registerRoutes(app, httpServer) {
         userId: user.id,
         email,
         type: "membership",
-        items: [{ name: "Lifetime Access", planType, amount: cfg.amount }],
+        items: [{ name: "Monthly Membership", planType, amount: cfg.amount }],
         subtotal: cfg.amount,
         shipping: null,
         status: "processing"
@@ -49391,16 +49388,10 @@ var stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "sk_missing", {
   typescript: true
 });
 var STRIPE_PRICE_IDS = {
-  full: process.env.STRIPE_PRICE_LIFETIME ?? "",
-  "2mo": process.env.STRIPE_PRICE_2MO ?? "",
-  "3mo": process.env.STRIPE_PRICE_3MO ?? "",
-  "4mo": process.env.STRIPE_PRICE_4MO ?? ""
+  monthly: process.env.STRIPE_PRICE_MONTHLY ?? ""
 };
 var PLAN_CONFIG = {
-  full: { label: "Lifetime \u2014 Pay in full", mode: "payment", iterations: 1, installmentAmount: 1100, totalAmount: 1100 },
-  "2mo": { label: "Lifetime \u2014 2-Month Plan", mode: "subscription", iterations: 2, installmentAmount: 550, totalAmount: 1100 },
-  "3mo": { label: "Lifetime \u2014 3-Month Plan", mode: "subscription", iterations: 3, installmentAmount: 367, totalAmount: 1100 },
-  "4mo": { label: "Lifetime \u2014 4-Month Plan", mode: "subscription", iterations: 4, installmentAmount: 275, totalAmount: 1100 }
+  monthly: { label: "Monthly Membership", mode: "subscription", iterations: null, installmentAmount: 600, totalAmount: 600 }
 };
 
 // server/stripeRoutes.ts
@@ -49485,8 +49476,7 @@ function registerStripeRoutes(app) {
         client_reference_id: String(user.id),
         metadata: {
           userId: String(user.id),
-          planType,
-          iterations: String(plan.iterations)
+          planType
         },
         allow_promotion_codes: true
       };
@@ -49494,8 +49484,7 @@ function registerStripeRoutes(app) {
         sessionParams.subscription_data = {
           metadata: {
             userId: String(user.id),
-            planType,
-            iterations: String(plan.iterations)
+            planType
           }
         };
       } else {
@@ -49512,7 +49501,7 @@ function registerStripeRoutes(app) {
         planType,
         totalAmount: plan.totalAmount,
         installmentAmount: plan.installmentAmount,
-        totalInstallments: plan.iterations,
+        totalInstallments: 1,
         paidInstallments: 0,
         nextChargeDate: null,
         stripeSessionId: session.id,

@@ -1,35 +1,33 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Layout } from "@/components/Layout";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Logo } from "@/components/Logo";
 import { Check, Lock } from "lucide-react";
 import { apiRequest, setAuthToken } from "@/lib/queryClient";
 import { useSession } from "@/context/SessionContext";
-import { PLANS } from "./Pricing";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Checkout() {
   const search = typeof window !== "undefined" ? window.location.hash.split("?")[1] ?? "" : "";
   const qs = new URLSearchParams(search);
-  const initialPlan = qs.get("plan") || "full";
+  const initialPlan = qs.get("plan") || "monthly";
   const stripeSession = qs.get("stripe_session");
   const canceled = qs.get("canceled") === "1";
   const { setSession } = useSession();
   const { toast } = useToast();
   const [, navigate] = useLocation();
 
-  const [planType, setPlanType] = useState(initialPlan);
+  const [planType] = useState(initialPlan);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [verifying, setVerifying] = useState(!!stripeSession);
 
-  const plan = useMemo(() => PLANS.find((p) => p.id === planType)!, [planType]);
+  const plan = { id: "monthly", label: "Monthly Membership", amount: "$600", cadence: "/ month", installments: 1, installmentAmount: 600 };
 
   // If we returned from Stripe with a session ID, verify and log the user in
   useEffect(() => {
@@ -133,32 +131,24 @@ export default function Checkout() {
 
           <div className="grid gap-8 lg:grid-cols-3">
             <form onSubmit={onSubmit} className="lg:col-span-2 space-y-8" data-testid="form-checkout">
-              {/* Plan selector */}
-              <div>
-                <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-4">1. Payment plan</h2>
-                <RadioGroup value={planType} onValueChange={setPlanType} className="grid sm:grid-cols-2 gap-3">
-                  {PLANS.map((p) => (
-                    <label
-                      key={p.id}
-                      htmlFor={`plan-opt-${p.id}`}
-                      className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors ${planType === p.id ? "border-accent bg-accent/5" : "border-card-border bg-card"}`}
-                    >
-                      <RadioGroupItem value={p.id} id={`plan-opt-${p.id}`} className="mt-0.5" data-testid={`radio-plan-${p.id}`} />
-                      <div className="flex-1">
-                        <div className="flex items-baseline justify-between">
-                          <span className="font-medium">{p.label}</span>
-                          <span className="serif text-lg">{p.amount}<span className="text-xs text-muted-foreground font-sans">{p.cadence}</span></span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">{p.sub} · Total $1,100</p>
-                      </div>
-                    </label>
-                  ))}
-                </RadioGroup>
+              {/* Plan summary */}
+              <div className="rounded-lg border border-[hsl(var(--brand-gold))] bg-card p-5">
+                <div className="flex items-baseline justify-between">
+                  <div>
+                    <div className="eyebrow text-[11px] mb-1">Your plan</div>
+                    <div className="serif text-xl">Monthly Membership</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="serif text-3xl">$600</div>
+                    <div className="mono text-[11px] text-muted-foreground uppercase tracking-widest-editorial">/ month</div>
+                  </div>
+                </div>
+                <p className="mt-3 text-[13px] text-muted-foreground">Cancel anytime before your next billing date.</p>
               </div>
 
               {/* Account */}
               <div>
-                <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-4">2. Create your account</h2>
+                <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-4">1. Create your account</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name">Full name</Label>
@@ -179,7 +169,7 @@ export default function Checkout() {
               {/* Payment info notice */}
               <div className="rounded-lg border border-card-border bg-card p-5">
                 <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-2 flex items-center gap-1.5">
-                  3. Secure payment <Lock size={11} className="text-muted-foreground" />
+                  2. Secure payment <Lock size={11} className="text-muted-foreground" />
                 </h2>
                 <p className="text-sm text-muted-foreground">
                   Click below to continue to Stripe, our PCI-compliant payment processor. Your card details never touch our servers.
@@ -190,31 +180,31 @@ export default function Checkout() {
                 {submitting ? "Redirecting to Stripe..." : `Continue to Payment — ${plan.amount}${plan.cadence}`}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
-                Secured by Stripe · 14-day money-back guarantee
+                Secured by Stripe · Cancel anytime · 7-day money-back guarantee
               </p>
             </form>
 
             <aside className="lg:col-span-1">
-              <div className="sticky top-24 rounded-xl border border-accent/30 bg-card p-6 gold-glow">
+              <div className="sticky top-24 rounded-xl border border-[hsl(var(--brand-gold))] bg-card p-6">
                 <div className="flex items-center gap-3">
                   <Logo size={36} />
                   <div>
                     <div className="eyebrow text-accent text-[10px]">Your order</div>
-                    <div className="serif text-lg">Lifetime Access</div>
+                    <div className="serif text-lg">Monthly Membership</div>
                   </div>
                 </div>
                 <div className="hairline my-5" />
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-muted-foreground">Plan total</span><span>$1,100.00</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Installments</span><span>{plan.installments}</span></div>
-                  <div className="flex justify-between font-medium"><span>Due today</span><span>{plan.installmentAmount === 1100 ? "$1,100.00" : `$${plan.installmentAmount}.00`}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Billed monthly</span><span>$600.00</span></div>
+                  <div className="flex justify-between font-medium"><span>Due today</span><span>$600.00</span></div>
                 </div>
                 <div className="hairline my-5" />
                 <ul className="space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> Full curriculum forever</li>
+                  <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> 40+ webinars included</li>
                   <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> Live desk access</li>
-                  <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> Community + forum</li>
-                  <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> 14-day refund</li>
+                  <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> Private Telegram house</li>
+                  <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> Cancel anytime</li>
+                  <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> 7-day guarantee</li>
                 </ul>
               </div>
             </aside>

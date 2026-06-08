@@ -10,6 +10,9 @@ import {
   Radio,
   FolderDown,
   Check,
+  TrendingUp,
+  Shield,
+  Zap,
 } from "lucide-react";
 import {
   Accordion,
@@ -42,30 +45,48 @@ const MARKETS = [
 const INSIDE = [
   {
     icon: Video,
-    title: "37+ Webinars & Counting",
-    desc: "Every webinar you've missed, replayable anytime. New sessions weekly.",
+    title: "40+ Webinars & Counting",
+    desc: "Every webinar you've missed, replayable anytime. New sessions added weekly so your edge keeps growing.",
   },
   {
     icon: Radio,
     title: "Live Desk Sessions",
-    desc: "Trade alongside Byron and the team in real time. Ask questions as they happen.",
+    desc: "Trade alongside Byron and the team in real time. Watch the setups form, ask questions as they happen.",
   },
   {
     icon: MessagesSquare,
     title: "The Telegram House",
-    desc: "11 active channels — Trade Ideas, Profits, Digital Downloads, OPA Events and more. 27+ traders. A community that actually shows up.",
+    desc: "11 active channels — Trade Ideas, Profits, Digital Downloads, OPA Events and more. A community that actually shows up.",
   },
   {
     icon: FolderDown,
     title: "Digital Resources",
-    desc: "PDFs, backtests, templates. Grow your toolkit as you grow your account.",
+    desc: "PDFs, backtests, templates. Everything to grow your toolkit as you grow your account.",
+  },
+];
+
+const PILLARS = [
+  {
+    icon: TrendingUp,
+    title: "Consistent Edge",
+    desc: "We don't teach theory. We teach repeatable setups that work on USD/JPY, BTC, and the majors — the same ones Byron trades every week.",
+  },
+  {
+    icon: Shield,
+    title: "Risk-First Mindset",
+    desc: "Before a single entry, you learn to protect capital. Risk management is the curriculum, not a footnote.",
+  },
+  {
+    icon: Zap,
+    title: "Real-Time Access",
+    desc: "When the market moves, you're not watching from the sidelines. You're in the live desk, in the chat, in the session.",
   },
 ];
 
 const TESTIMONIALS = [
   {
     body:
-      "I had $350 yesterday — turned it into $700+. Goal is to keep stacking this account. 💯",
+      "I had $350 yesterday — turned it into $700+. Goal is to keep stacking this account.",
     name: "Jacob A.",
     sub: "Funded account holder",
   },
@@ -90,40 +111,36 @@ const TESTIMONIALS = [
 
 const FAQ = [
   {
+    q: "What do I get for $600/month?",
+    a: "Full access to every live desk session, the entire webinar library (40+), all 11 Telegram channels, weekly deep-dives, and every digital resource we publish — for as long as you're a member.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a: "Yes. Cancel before your next billing date and you won't be charged again. No contracts, no lock-in.",
+  },
+  {
+    q: "Do I need trading experience to join?",
+    a: "No. Members range from brand-new to funded account holders. The curriculum meets you where you are.",
+  },
+  {
+    q: "What markets does the academy cover?",
+    a: "Crypto (BTC, ETH, majors), Forex (USD/JPY, EUR/USD, and more), and Options (0DTE through LEAPS). One membership, three complete tracks.",
+  },
+  {
     q: "How does the Telegram community work?",
-    a: "Once you join, you get a direct invite link to our private Telegram. 11 channels, real conversations, and you can message anyone — including Byron — directly.",
-  },
-  {
-    q: "What's actually in the webinar library?",
-    a: "37+ recorded webinars spanning crypto, forex, and options — from beginner breakdowns to advanced setups. New sessions added weekly.",
-  },
-  {
-    q: "Do I need to be experienced to join?",
-    a: "No. Members range from brand-new to funded account holders. The community is set up for everyone to grow.",
-  },
-  {
-    q: "How do the payment plans work?",
-    a: "Pick 2, 3, or 4 months at checkout. Same total — $1,100 — split into equal payments. No interest, no hidden fees.",
+    a: "You get a direct invite to our private Telegram house — 11 channels, real conversations, and direct access to Byron and every active member.",
   },
   {
     q: "Is this financial advice?",
-    a: "No. We teach discipline, setups, and risk management. Everything you learn is educational.",
+    a: "No. OPA is an education platform. We teach discipline, setups, and risk management. Everything is for educational purposes only.",
   },
   {
-    q: "What if I want a refund?",
-    a: "We stand behind the Academy. If within 7 days you haven't found value, email support@organicprofitsacademy.com for a full refund.",
+    q: "What is your refund policy?",
+    a: "If within 7 days you haven't found value, email support@organicprofitsacademy.com for a full refund. We stand behind the academy.",
   },
-];
-
-const PLANS = [
-  { id: "full", label: "Pay in full", price: "$1,100 today" },
-  { id: "2mo", label: "2 months", price: "$550 × 2" },
-  { id: "3mo", label: "3 months", price: "$367 × 3" },
-  { id: "4mo", label: "4 months", price: "$275 × 4" },
 ];
 
 function HeroAmbient() {
-  // Slow rising hairlines — softer in light mode.
   const lines = Array.from({ length: 10 }).map((_, i) => ({
     left: (i * 9.7) % 100,
     delay: i * 1.8,
@@ -159,9 +176,9 @@ function scrollToInside() {
 export default function Landing() {
   return (
     <Layout>
-      {/* ==================== HERO — ~85vh, warm welcoming ==================== */}
+      {/* ==================== HERO ==================== */}
       <section
-        className="relative min-h-[85svh] flex items-center overflow-hidden"
+        className="relative min-h-[90svh] flex items-center overflow-hidden"
         data-testid="section-hero"
       >
         <HeroAmbient />
@@ -170,30 +187,36 @@ export default function Landing() {
             {/* Left — copy */}
             <div className="lg:col-span-7 fade-up">
               <p className="eyebrow mb-7 text-accent">
-                ORGANIC PROFITS ACADEMY
+                ORGANIC PROFITS ACADEMY — PREMIUM MEMBERSHIP
               </p>
               <h1 className="display-hero">
                 <span className="block" style={{ fontWeight: 500 }}>
-                  A real traders'
+                  Trade with an edge.
                 </span>
-                <span className="block italic opacity-90">community.</span>
+                <span className="block italic opacity-90">Not a guess.</span>
               </h1>
               <p className="mt-6 serif italic text-2xl md:text-[1.7rem] leading-snug text-foreground/80">
-                Real wins. Real people.
+                Live sessions. Real setups. A community that wins together.
               </p>
               <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
-                A private academy for disciplined traders across crypto, forex, and
-                options. Live sessions, a growing library of 37+ webinars, and a
-                tight-knit Telegram community of 27+ members who actually show up
-                for each other.
+                Join a private trading academy led by Byron — a full-time trader with years
+                of experience in crypto, forex, and options. Get live desk access, 40+
+                on-demand webinars, and a tight-knit Telegram community for one flat rate.
               </p>
-              <div className="mt-10 flex flex-wrap items-center gap-4">
+
+              {/* Price callout */}
+              <div className="mt-10 inline-flex items-baseline gap-3 bg-[hsl(var(--brand-silver-cream))] border border-[hsl(var(--brand-gold))] px-8 py-5">
+                <span className="serif text-5xl tracking-tight" style={{ fontWeight: 400 }}>$600</span>
+                <span className="mono text-[12px] uppercase tracking-widest-editorial text-muted-foreground">/&nbsp;month</span>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center gap-4">
                 <Link href="/pricing" data-testid="link-hero-join">
                   <Button
                     size="lg"
                     className="bg-primary text-primary-foreground h-12 px-8 rounded-none mono uppercase tracking-widest-editorial text-[11px] font-medium hover:bg-[hsl(var(--brand-deep-brown))] hover:text-[hsl(var(--brand-warm-white))] transition-colors"
                   >
-                    Become a Member
+                    Join the Academy — $600/mo
                   </Button>
                 </Link>
                 <button
@@ -204,9 +227,13 @@ export default function Landing() {
                   See What's Inside
                 </button>
               </div>
+
+              <p className="mt-5 text-[12px] text-muted-foreground mono">
+                Cancel anytime. No contracts. 7-day money-back guarantee.
+              </p>
             </div>
 
-            {/* Right — logo, floating, kept on desktop */}
+            {/* Right — logo */}
             <div className="lg:col-span-5 hidden lg:flex justify-center items-center">
               <div className="relative aspect-square w-full max-w-[420px] flex items-center justify-center">
                 <div className="absolute inset-6 border border-[hsl(var(--accent)/0.18)]" />
@@ -220,7 +247,7 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Niche strip at bottom */}
+        {/* Niche strip */}
         <div className="absolute bottom-0 left-0 right-0 hairline-top py-5 px-6 lg:px-10">
           <div className="mx-auto max-w-7xl flex items-center justify-center gap-6 md:gap-12 eyebrow flex-wrap">
             <span>Crypto Trading</span>
@@ -240,9 +267,9 @@ export default function Landing() {
         <div className="mx-auto max-w-5xl px-6 lg:px-10">
           <div className="grid grid-cols-3 gap-6 md:gap-12 text-center">
             {[
-              { stat: "27+", label: "Members" },
-              { stat: "37+", label: "Webinars" },
-              { stat: "1", label: "Private House" },
+              { stat: "27+", label: "Active Members" },
+              { stat: "40+", label: "Live Webinars" },
+              { stat: "$600", label: "Per Month, All-In" },
             ].map((s) => (
               <div key={s.label}>
                 <div className="serif text-5xl md:text-6xl tracking-tight" style={{ fontWeight: 400 }}>
@@ -255,13 +282,62 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ==================== THE 3 MARKETS ==================== */}
-      <section className="py-20 lg:py-24" data-testid="section-markets">
+      {/* ==================== WHY OPA ==================== */}
+      <section className="py-20 lg:py-24" data-testid="section-why">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <Reveal>
             <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-14">
               <div className="lg:col-span-4">
-                <p className="eyebrow mb-5">01 — The 3 Markets</p>
+                <p className="eyebrow mb-5">01 — Why OPA</p>
+              </div>
+              <div className="lg:col-span-8">
+                <h2 className="display-xl serif">
+                  Most traders fail<br />
+                  <span className="italic">because they trade alone.</span>
+                </h2>
+                <p className="mt-5 max-w-lg text-muted-foreground text-[15px] leading-relaxed">
+                  OPA exists to change that. Real mentorship, real-time sessions, and a
+                  community of traders who hold each other accountable — not a course you
+                  buy and forget.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {PILLARS.map((p, i) => (
+              <Reveal key={p.title} delay={i * 80}>
+                <div
+                  className="bg-card border border-border p-8 lg:p-10 h-full transition-colors hover:border-[hsl(var(--brand-brown))]"
+                  data-testid={`pillar-${i}`}
+                >
+                  <p.icon
+                    size={22}
+                    strokeWidth={1.5}
+                    className="text-[hsl(var(--brand-brown))]"
+                  />
+                  <h3 className="serif text-2xl mt-5 leading-tight" style={{ fontWeight: 400 }}>
+                    {p.title}
+                  </h3>
+                  <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
+                    {p.desc}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="hairline" />
+
+      {/* ==================== THE 3 MARKETS ==================== */}
+      <section className="py-20 lg:py-24 bg-[hsl(var(--brand-silver-cream))]" data-testid="section-markets">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <Reveal>
+            <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-14">
+              <div className="lg:col-span-4">
+                <p className="eyebrow mb-5">02 — The 3 Markets</p>
               </div>
               <div className="lg:col-span-8">
                 <h2 className="display-xl serif">
@@ -270,7 +346,7 @@ export default function Landing() {
                 </h2>
                 <p className="mt-5 max-w-md text-muted-foreground text-[15px] leading-relaxed">
                   Each track is a complete curriculum — first principles through
-                  advanced, desk-grade tactics.
+                  advanced, desk-grade tactics. One membership covers all three.
                 </p>
               </div>
             </div>
@@ -279,12 +355,11 @@ export default function Landing() {
           <div className="grid gap-1 md:grid-cols-3">
             {MARKETS.map((m, i) => (
               <Reveal key={m.key} delay={i * 80}>
-                <Link href="/library">
+                <Link href="/pricing">
                   <a
                     className="group relative block overflow-hidden aspect-[3/4] md:aspect-[4/5] border border-border transition-all duration-500 hover:border-[hsl(var(--brand-brown))]"
                     data-testid={`market-${m.key}`}
                   >
-                    {/* warm gradient placeholder using brown family */}
                     <div
                       className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.03]"
                       style={{
@@ -329,7 +404,7 @@ export default function Landing() {
                         {m.desc}
                       </p>
                       <div className="mt-5 inline-flex items-center gap-2 eyebrow text-[hsl(40_28%_85%)]">
-                        Explore track <ArrowRight size={12} />
+                        Join now <ArrowRight size={12} />
                       </div>
                     </div>
                   </a>
@@ -345,20 +420,24 @@ export default function Landing() {
       {/* ==================== INSIDE THE ACADEMY ==================== */}
       <section
         id="inside-academy"
-        className="py-20 lg:py-24 bg-[hsl(var(--brand-silver-cream))]"
+        className="py-20 lg:py-24"
         data-testid="section-inside"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <Reveal>
             <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-14">
               <div className="lg:col-span-4">
-                <p className="eyebrow mb-5">02 — Inside the Academy</p>
+                <p className="eyebrow mb-5">03 — Inside the Academy</p>
               </div>
               <div className="lg:col-span-8">
                 <h2 className="display-xl serif">
                   Everything you need.<br />
                   <span className="italic">Nothing you don't.</span>
                 </h2>
+                <p className="mt-5 max-w-md text-muted-foreground text-[15px] leading-relaxed">
+                  Every tool, session, and resource is included in your $600/month membership.
+                  No upsells. No tiers.
+                </p>
               </div>
             </div>
           </Reveal>
@@ -384,14 +463,6 @@ export default function Landing() {
                   <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
                     {item.desc}
                   </p>
-                  <Link
-                    href={i === 2 ? "/community" : "/library"}
-                    data-testid={`inside-link-${i}`}
-                  >
-                    <a className="mt-6 inline-flex items-center gap-2 mono text-[11px] uppercase tracking-widest-editorial text-[hsl(var(--brand-brown))] hover:text-foreground transition-colors">
-                      Learn more <ArrowRight size={12} />
-                    </a>
-                  </Link>
                 </div>
               </Reveal>
             ))}
@@ -402,12 +473,12 @@ export default function Landing() {
       <div className="hairline" />
 
       {/* ==================== REAL WINS ==================== */}
-      <section className="py-20 lg:py-24" data-testid="section-wins">
+      <section className="py-20 lg:py-24 bg-[hsl(var(--brand-silver-cream))]" data-testid="section-wins">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <Reveal>
             <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-14">
               <div className="lg:col-span-4">
-                <p className="eyebrow mb-5">03 — Real Wins</p>
+                <p className="eyebrow mb-5">04 — Real Wins</p>
               </div>
               <div className="lg:col-span-8">
                 <h2 className="display-xl serif">
@@ -446,47 +517,50 @@ export default function Landing() {
 
       <div className="hairline" />
 
-      {/* ==================== MEMBERSHIP ==================== */}
+      {/* ==================== MEMBERSHIP CTA ==================== */}
       <section
-        className="py-20 lg:py-24 bg-[hsl(var(--brand-silver-cream))]"
+        className="py-20 lg:py-24"
         data-testid="section-pricing"
       >
         <div className="mx-auto max-w-lg px-6 text-center">
           <Reveal>
-            <p className="eyebrow mb-6">04 — Lifetime Membership</p>
+            <p className="eyebrow mb-6">05 — Join the Academy</p>
             <div
               className="bg-card border border-[hsl(var(--brand-gold))] p-10 md:p-12"
               data-testid="card-pricing"
             >
-              <div className="eyebrow mb-4">Lifetime Membership</div>
-              <div
-                className="serif text-6xl md:text-7xl tracking-tight"
-                style={{ fontWeight: 400 }}
-              >
-                $1,100
+              <div className="eyebrow mb-4">Monthly Membership</div>
+              <div className="flex items-baseline justify-center gap-3">
+                <div
+                  className="serif text-6xl md:text-7xl tracking-tight"
+                  style={{ fontWeight: 400 }}
+                >
+                  $600
+                </div>
+                <span className="mono text-[12px] uppercase tracking-widest-editorial text-muted-foreground">/ month</span>
               </div>
               <p className="mt-3 text-sm text-[hsl(var(--brand-brown))]">
-                One payment. Or split it over 2, 3, or 4 months.
+                Cancel anytime. No contracts. No hidden fees.
               </p>
 
               <div className="hairline my-10" />
 
               <div className="space-y-2 text-left">
-                {PLANS.map((p) => (
+                {[
+                  "40+ on-demand webinars across all 3 markets",
+                  "Live desk sessions every week",
+                  "11-channel private Telegram house",
+                  "Digital resources, PDFs & backtests",
+                  "Direct access to Byron",
+                  "All future content included",
+                  "7-day money-back guarantee",
+                ].map((item) => (
                   <div
-                    key={p.id}
-                    className="flex items-center justify-between py-3 hairline-bottom last:border-b-0"
-                    data-testid={`plan-${p.id}`}
+                    key={item}
+                    className="flex items-center gap-3 py-2"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="h-3 w-3 rounded-full border border-[hsl(var(--brand-brown))]" />
-                      <span className="mono uppercase tracking-wider-editorial text-[11px]">
-                        {p.label}
-                      </span>
-                    </div>
-                    <span className="mono text-[11px] text-muted-foreground uppercase tracking-wider-editorial">
-                      {p.price}
-                    </span>
+                    <Check size={14} className="text-[hsl(var(--brand-green))] shrink-0" strokeWidth={2.5} />
+                    <span className="text-[14px] leading-relaxed text-foreground">{item}</span>
                   </div>
                 ))}
               </div>
@@ -496,27 +570,12 @@ export default function Landing() {
                   size="lg"
                   className="mt-10 w-full bg-primary text-primary-foreground hover:bg-[hsl(var(--brand-deep-brown))] hover:text-[hsl(var(--brand-warm-white))] transition-colors h-12 rounded-none mono uppercase tracking-widest-editorial text-[11px] font-medium"
                 >
-                  Reserve Your Spot
+                  Start Today — $600/month
                 </Button>
               </Link>
-            </div>
-
-            {/* Badge row */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-              {[
-                "Lifetime access",
-                "All future content",
-                "Direct Telegram invite",
-                "No recurring fees",
-              ].map((b) => (
-                <span
-                  key={b}
-                  className="inline-flex items-center gap-2 mono text-[11px] uppercase tracking-wider-editorial text-[hsl(var(--brand-brown))]"
-                >
-                  <Check size={12} className="text-[hsl(var(--brand-green))]" strokeWidth={2} />
-                  {b}
-                </span>
-              ))}
+              <p className="mt-4 text-[12px] text-muted-foreground mono">
+                Billed monthly. Cancel before next billing date.
+              </p>
             </div>
           </Reveal>
         </div>
@@ -525,11 +584,11 @@ export default function Landing() {
       <div className="hairline" />
 
       {/* ==================== FAQ ==================== */}
-      <section className="py-20 lg:py-24" data-testid="section-faq">
+      <section className="py-20 lg:py-24 bg-[hsl(var(--brand-silver-cream))]" data-testid="section-faq">
         <div className="mx-auto max-w-3xl px-6 lg:px-10">
           <Reveal>
             <div className="mb-10">
-              <p className="eyebrow mb-5">05 — Frequently Asked</p>
+              <p className="eyebrow mb-5">06 — Frequently Asked</p>
               <h2 className="display-xl serif">
                 Before <span className="italic">you join.</span>
               </h2>
@@ -560,6 +619,29 @@ export default function Landing() {
               </AccordionItem>
             ))}
           </Accordion>
+
+          {/* Final CTA */}
+          <Reveal>
+            <div className="mt-20 text-center">
+              <h2 className="serif text-3xl md:text-4xl" style={{ fontWeight: 400 }}>
+                Ready to trade with a real edge?
+              </h2>
+              <p className="mt-4 text-muted-foreground text-[15px]">
+                Join 27+ traders who are actively building their accounts inside OPA.
+              </p>
+              <Link href="/pricing">
+                <Button
+                  size="lg"
+                  className="mt-8 bg-primary text-primary-foreground h-12 px-10 rounded-none mono uppercase tracking-widest-editorial text-[11px] font-medium hover:bg-[hsl(var(--brand-deep-brown))] hover:text-[hsl(var(--brand-warm-white))] transition-colors"
+                >
+                  Join the Academy — $600/mo
+                </Button>
+              </Link>
+              <p className="mt-4 text-[12px] text-muted-foreground mono">
+                Cancel anytime. 7-day money-back guarantee.
+              </p>
+            </div>
+          </Reveal>
         </div>
       </section>
     </Layout>

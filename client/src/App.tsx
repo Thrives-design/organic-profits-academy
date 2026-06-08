@@ -36,10 +36,10 @@ import { CartProvider } from "@/context/CartContext";
 // Per-route document title + meta description.
 // Centralized here so we don't have to touch every page component.
 const PAGE_META: Record<string, { title: string; description: string }> = {
-  "/":               { title: "",                       description: "A premium trading academy teaching crypto, forex, and options. Lifetime access, live webinars, on-demand library, and private community." },
+  "/":               { title: "",                       description: "A premium trading academy teaching crypto, forex, and options. Live sessions, 40+ webinars, and a private community — $600/month." },
   "/academy":        { title: "The Academy",            description: "Master crypto, forex, and options trading with our structured curriculum, live webinars, and on-demand video library." },
-  "/pricing":        { title: "Pricing",                description: "Lifetime access for $1,100. Pay in full or split across 2, 3, or 4 months. One price, all niches, forever." },
-  "/checkout":       { title: "Checkout",               description: "Secure your lifetime access to Organic Profits Academy." },
+  "/pricing":        { title: "Pricing",                description: "$600/month. All three markets. Live sessions, 40+ webinars, private Telegram house. Cancel anytime." },
+  "/checkout":       { title: "Checkout",               description: "Join Organic Profits Academy for $600/month. Cancel anytime." },
   "/login":          { title: "Log in",                 description: "Log in to your Organic Profits Academy account." },
   "/signup":         { title: "Create your account",    description: "Create your Organic Profits Academy account and start trading smarter." },
   "/forgot-password":{ title: "Forgot password",        description: "Reset your Organic Profits Academy password." },
