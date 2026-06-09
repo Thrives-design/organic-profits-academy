@@ -199,9 +199,9 @@ export default function Landing() {
               </p>
 
               {/* Price callout */}
-              <div className="mt-10 inline-flex items-baseline gap-3 bg-[hsl(var(--brand-deep-brown))] border border-[hsl(var(--brand-gold))] px-8 py-5">
-                <span className="serif text-5xl tracking-tight text-[hsl(var(--brand-warm-white))]" style={{ fontWeight: 400 }}>$600</span>
-                <span className="mono text-[12px] uppercase tracking-widest-editorial text-[hsl(var(--brand-gold))]">/&nbsp;month</span>
+              <div className="mt-10 inline-flex items-baseline gap-3 px-8 py-5 border" style={{ background: "hsl(37 26% 13%)", borderColor: "hsl(40 28% 55%)" }}>
+                <span className="serif text-5xl tracking-tight" style={{ fontWeight: 400, color: "hsl(42 44% 97%)" }}>$600</span>
+                <span className="mono text-[12px] uppercase tracking-widest-editorial" style={{ color: "hsl(40 28% 55%)" }}>/&nbsp;month</span>
               </div>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
