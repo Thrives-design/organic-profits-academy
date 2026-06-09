@@ -627,7 +627,7 @@ export default function Landing() {
               { src: profit6,  label: "$100k Funded Account" },
               { src: profit7,  label: "Community Love" },
               { src: profit8,  label: "$150 → $1,100 in 3 Days" },
-              { src: profit9,  label: "GatesFX +$2,463" },
+              { src: profit9,  label: "Live Account +$2,463" },
               { src: profit10, label: "XAUUSD +$1,963 Today" },
               { src: profit11, label: "EUR/USD +$280" },
               { src: profit3,  label: "USD/JPY Multi-TP" },
