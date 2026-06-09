@@ -14,6 +14,17 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
+import profit1 from "@assets/profit-1.jpeg";
+import profit2 from "@assets/profit-2.jpeg";
+import profit3 from "@assets/profit-3.jpeg";
+import profit4 from "@assets/profit-4.jpeg";
+import profit5 from "@assets/profit-5.jpeg";
+import profit6 from "@assets/profit-6.jpeg";
+import profit7 from "@assets/profit-7.jpeg";
+import profit8 from "@assets/profit-8.jpeg";
+import profit9 from "@assets/profit-9.jpeg";
+import profit10 from "@assets/profit-10.jpeg";
+import profit11 from "@assets/profit-11.jpeg";
 import {
   Accordion,
   AccordionContent,
@@ -607,38 +618,35 @@ export default function Landing() {
             </div>
           </Reveal>
 
-          {/* Masonry-style profit gallery — replace bg placeholders with <img src="..."> tags */}
-          <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
             {[
-              { h: "aspect-[3/4]", label: "USD/JPY Long" },
-              { h: "aspect-square", label: "BTC Breakout" },
-              { h: "aspect-[4/3]", label: "EUR/USD Short" },
-              { h: "aspect-[3/4]", label: "Funded Challenge Pass" },
-              { h: "aspect-square", label: "Crypto Scalp" },
-              { h: "aspect-[4/5]", label: "Crypto Swing" },
-              { h: "aspect-[3/4]", label: "Weekly P&L" },
-              { h: "aspect-square", label: "Member Win" },
+              { src: profit1,  label: "NAS100 +$107" },
+              { src: profit4,  label: "$7,323 P&L Live" },
+              { src: profit2,  label: "$4,224 Week — USD/JPY" },
+              { src: profit5,  label: "Funded Challenge Passed" },
+              { src: profit6,  label: "$100k Funded Account" },
+              { src: profit7,  label: "Community Love" },
+              { src: profit8,  label: "$150 → $1,100 in 3 Days" },
+              { src: profit9,  label: "GatesFX +$2,463" },
+              { src: profit10, label: "XAUUSD +$1,963 Today" },
+              { src: profit11, label: "EUR/USD +$280" },
+              { src: profit3,  label: "USD/JPY Multi-TP" },
             ].map((item, i) => (
-              <Reveal key={i} delay={i * 50}>
+              <Reveal key={i} delay={i * 40}>
                 <div
-                  className={`relative ${item.h} w-full mb-4 break-inside-avoid border border-border overflow-hidden group cursor-pointer`}
+                  className="relative w-full mb-3 break-inside-avoid border border-border overflow-hidden group cursor-pointer"
                   data-testid={`profit-${i}`}
                 >
-                  {/* Replace this div with: <img src="/your-screenshot.png" alt={item.label} className="w-full h-full object-cover" /> */}
-                  <div
-                    className="absolute inset-0 flex items-end"
-                    style={{
-                      background: i % 2 === 0
-                        ? "linear-gradient(160deg, hsl(32 24% 20%) 0%, hsl(40 28% 38%) 100%)"
-                        : "linear-gradient(160deg, hsl(200 36% 14%) 0%, hsl(32 24% 28%) 100%)",
-                    }}
-                  >
-                    <div className="w-full p-4 bg-gradient-to-t from-black/60 to-transparent">
+                  <img
+                    src={item.src}
+                    alt={item.label}
+                    className="w-full h-auto object-cover block transition-transform duration-500 group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+                    <div className="p-3 w-full">
                       <span className="eyebrow text-[10px] text-[hsl(var(--brand-gold))]">{item.label}</span>
                     </div>
-                  </div>
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="mono text-[10px] uppercase tracking-widest-editorial text-white">View</span>
                   </div>
                 </div>
               </Reveal>
