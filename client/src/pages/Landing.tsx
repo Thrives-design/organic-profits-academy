@@ -45,8 +45,8 @@ const MARKETS = [
 const INSIDE = [
   {
     icon: Video,
-    title: "40+ Webinars & Counting",
-    desc: "Every webinar you've missed, replayable anytime. New sessions added weekly so your edge keeps growing.",
+    title: "Recorded Webinars for Study",
+    desc: "Every session is recorded and available on demand. Watch at your own pace, rewatch setups as many times as you need.",
   },
   {
     icon: Radio,
@@ -112,7 +112,7 @@ const TESTIMONIALS = [
 const FAQ = [
   {
     q: "What do I get for $600/month?",
-    a: "Full access to every live desk session, the entire webinar library (40+), all 11 Telegram channels, weekly deep-dives, and every digital resource we publish — for as long as you're a member.",
+    a: "Full access to every live desk session, the complete recorded webinar library, all 11 Telegram channels, weekly deep-dives, and every digital resource we publish — for as long as you're a member.",
   },
   {
     q: "Can I cancel anytime?",
@@ -205,9 +205,9 @@ export default function Landing() {
               </p>
 
               {/* Price callout */}
-              <div className="mt-10 inline-flex items-baseline gap-3 bg-[hsl(var(--brand-silver-cream))] border border-[hsl(var(--brand-gold))] px-8 py-5">
-                <span className="serif text-5xl tracking-tight" style={{ fontWeight: 400 }}>$600</span>
-                <span className="mono text-[12px] uppercase tracking-widest-editorial text-muted-foreground">/&nbsp;month</span>
+              <div className="mt-10 inline-flex items-baseline gap-3 bg-[hsl(var(--brand-deep-brown))] border border-[hsl(var(--brand-gold))] px-8 py-5">
+                <span className="serif text-5xl tracking-tight text-[hsl(var(--brand-warm-white))]" style={{ fontWeight: 400 }}>$600</span>
+                <span className="mono text-[12px] uppercase tracking-widest-editorial text-[hsl(var(--brand-gold))]">/&nbsp;month</span>
               </div>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -268,7 +268,7 @@ export default function Landing() {
           <div className="grid grid-cols-3 gap-6 md:gap-12 text-center">
             {[
               { stat: "27+", label: "Active Members" },
-              { stat: "40+", label: "Live Webinars" },
+              { stat: "100%", label: "Recorded Webinars" },
               { stat: "$600", label: "Per Month, All-In" },
             ].map((s) => (
               <div key={s.label}>
@@ -517,6 +517,150 @@ export default function Landing() {
 
       <div className="hairline" />
 
+      {/* ==================== VIDEO TESTIMONIALS ==================== */}
+      <section className="py-20 lg:py-24" data-testid="section-video-testimonials">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <Reveal>
+            <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-14">
+              <div className="lg:col-span-4">
+                <p className="eyebrow mb-5">05 — Member Stories</p>
+              </div>
+              <div className="lg:col-span-8">
+                <h2 className="display-xl serif">
+                  Hear it from<br />
+                  <span className="italic">the members.</span>
+                </h2>
+                <p className="mt-5 max-w-md text-muted-foreground text-[15px] leading-relaxed">
+                  Real traders. Real results. Watch what OPA members have to say about their experience.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                label: "Jacob A. — Passed His Funded Challenge",
+                sub: "From $350 to $700+ in one session",
+                placeholder: true,
+                n: "01",
+              },
+              {
+                label: "Wyskii — Catching On",
+                sub: "Starting to understand the full picture",
+                placeholder: true,
+                n: "02",
+              },
+              {
+                label: "Marcus L. — Accountability",
+                sub: "Found the community he couldn't find elsewhere",
+                placeholder: true,
+                n: "03",
+              },
+            ].map((v, i) => (
+              <Reveal key={i} delay={i * 80}>
+                <div
+                  className="group border border-border bg-card overflow-hidden transition-colors hover:border-[hsl(var(--brand-brown))]"
+                  data-testid={`video-${i}`}
+                >
+                  {/* Video embed placeholder — replace src with real YouTube/Loom embed URLs */}
+                  <div className="relative aspect-video bg-[hsl(var(--brand-deep-brown))] flex items-center justify-center">
+                    <div className="absolute inset-0 opacity-20"
+                      style={{
+                        background: `linear-gradient(135deg, hsl(32 24% 22%) 0%, hsl(40 28% 40%) 100%)`,
+                      }}
+                    />
+                    <div className="relative z-10 flex flex-col items-center gap-3">
+                      <div className="w-14 h-14 rounded-full bg-[hsl(var(--brand-gold)/0.9)] flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="hsl(var(--brand-deep-brown))" className="w-6 h-6 ml-1">
+                          <polygon points="5,3 19,12 5,21" />
+                        </svg>
+                      </div>
+                      <span className="serif text-[hsl(var(--brand-warm-white))] text-sm opacity-80">Member Story {v.n}</span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="eyebrow text-[11px] text-[hsl(var(--brand-brown))] mb-2">{v.label}</div>
+                    <p className="text-[14px] text-muted-foreground leading-relaxed">{v.sub}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <p className="mt-6 text-center text-[12px] text-muted-foreground">
+            Add your video URLs in the member dashboard to display real testimonial embeds here.
+          </p>
+        </div>
+      </section>
+
+      <div className="hairline" />
+
+      {/* ==================== PROFIT GALLERY ==================== */}
+      <section className="py-20 lg:py-24 bg-[hsl(var(--brand-silver-cream))]" data-testid="section-profits">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <Reveal>
+            <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-14">
+              <div className="lg:col-span-4">
+                <p className="eyebrow mb-5">06 — Proof of Profits</p>
+              </div>
+              <div className="lg:col-span-8">
+                <h2 className="display-xl serif">
+                  The trades<br />
+                  <span className="italic">speak for themselves.</span>
+                </h2>
+                <p className="mt-5 max-w-md text-muted-foreground text-[15px] leading-relaxed">
+                  Screenshots from live sessions and member accounts. These are real trades, real results.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Masonry-style profit gallery — replace bg placeholders with <img src="..."> tags */}
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+            {[
+              { h: "aspect-[3/4]", label: "USD/JPY Long" },
+              { h: "aspect-square", label: "BTC Breakout" },
+              { h: "aspect-[4/3]", label: "EUR/USD Short" },
+              { h: "aspect-[3/4]", label: "Funded Challenge Pass" },
+              { h: "aspect-square", label: "Crypto Scalp" },
+              { h: "aspect-[4/5]", label: "Options Premium" },
+              { h: "aspect-[3/4]", label: "Weekly P&L" },
+              { h: "aspect-square", label: "Member Win" },
+            ].map((item, i) => (
+              <Reveal key={i} delay={i * 50}>
+                <div
+                  className={`relative ${item.h} w-full mb-4 break-inside-avoid border border-border overflow-hidden group cursor-pointer`}
+                  data-testid={`profit-${i}`}
+                >
+                  {/* Replace this div with: <img src="/your-screenshot.png" alt={item.label} className="w-full h-full object-cover" /> */}
+                  <div
+                    className="absolute inset-0 flex items-end"
+                    style={{
+                      background: i % 2 === 0
+                        ? "linear-gradient(160deg, hsl(32 24% 20%) 0%, hsl(40 28% 38%) 100%)"
+                        : "linear-gradient(160deg, hsl(200 36% 14%) 0%, hsl(32 24% 28%) 100%)",
+                    }}
+                  >
+                    <div className="w-full p-4 bg-gradient-to-t from-black/60 to-transparent">
+                      <span className="eyebrow text-[10px] text-[hsl(var(--brand-gold))]">{item.label}</span>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="mono text-[10px] uppercase tracking-widest-editorial text-white">View</span>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          <p className="mt-10 text-center text-[12px] text-[hsl(var(--brand-brown)/0.75)]">
+            Educational only. Past results do not guarantee future performance.
+          </p>
+        </div>
+      </section>
+
+      <div className="hairline" />
+
       {/* ==================== MEMBERSHIP CTA ==================== */}
       <section
         className="py-20 lg:py-24"
@@ -524,7 +668,7 @@ export default function Landing() {
       >
         <div className="mx-auto max-w-lg px-6 text-center">
           <Reveal>
-            <p className="eyebrow mb-6">05 — Join the Academy</p>
+            <p className="eyebrow mb-6">07 — Join the Academy</p>
             <div
               className="bg-card border border-[hsl(var(--brand-gold))] p-10 md:p-12"
               data-testid="card-pricing"
@@ -547,7 +691,7 @@ export default function Landing() {
 
               <div className="space-y-2 text-left">
                 {[
-                  "40+ on-demand webinars across all 3 markets",
+                  "Recorded webinars across all 3 markets — study anytime",
                   "Live desk sessions every week",
                   "11-channel private Telegram house",
                   "Digital resources, PDFs & backtests",
@@ -588,7 +732,7 @@ export default function Landing() {
         <div className="mx-auto max-w-3xl px-6 lg:px-10">
           <Reveal>
             <div className="mb-10">
-              <p className="eyebrow mb-5">06 — Frequently Asked</p>
+              <p className="eyebrow mb-5">08 — Frequently Asked</p>
               <h2 className="display-xl serif">
                 Before <span className="italic">you join.</span>
               </h2>
