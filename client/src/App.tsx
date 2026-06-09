@@ -32,6 +32,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { SessionProvider } from "@/context/SessionContext";
 import { CartProvider } from "@/context/CartContext";
+import { LeadMagnetPopup } from "@/components/LeadMagnetPopup";
 
 // Per-route document title + meta description.
 // Centralized here so we don't have to touch every page component.
@@ -130,6 +131,7 @@ function App() {
               <Router hook={useHashLocation}>
                 <RouteHead />
                 <AppRouter />
+                <LeadMagnetPopup />
               </Router>
             </TooltipProvider>
           </CartProvider>

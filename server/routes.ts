@@ -10,6 +10,8 @@ import {
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { sendWelcomeEmail, sendPasswordResetEmail } from "./email";
+import path from "path";
+import fs from "fs";
 
 function genToken() {
   return crypto.randomBytes(32).toString("hex");
@@ -337,6 +339,71 @@ export async function registerRoutes(app: Express, httpServer?: Server): Promise
   });
   app.get("/api/orders", requireAdmin, async (_req, res) => {
     res.json(await storage.listOrders());
+  });
+
+  // ===== LEAD MAGNET =====
+  const leadRateLimit = rateLimit({ windowMs: 60 * 60 * 1000, max: 5, standardHeaders: true, legacyHeaders: false });
+
+  app.post("/api/lead-magnet", leadRateLimit, async (req, res) => {
+    try {
+      const { name, email } = req.body ?? {};
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({ error: "Email is required" });
+      }
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanName  = (name ?? "").toString().trim();
+
+      // Add to Mailchimp if keys are configured
+      const mcKey    = process.env.MAILCHIMP_API_KEY;
+      const mcListId = process.env.MAILCHIMP_LIST_ID;
+      if (mcKey && mcListId) {
+        try {
+          const dc = mcKey.split("-").pop(); // datacenter slug e.g. "us21"
+          const mcRes = await fetch(
+            `https://${dc}.api.mailchimp.com/3.0/lists/${mcListId}/members`,
+            {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${mcKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email_address: cleanEmail,
+                status: "subscribed",
+                merge_fields: { FNAME: cleanName },
+                tags: ["lead-magnet", "ebook"],
+              }),
+            }
+          );
+          // 400 with title MEMBER_EXISTS_WITH_EMAIL_ADDRESS is fine — already subscribed
+          if (!mcRes.ok) {
+            const err = await mcRes.json().catch(() => ({}));
+            if ((err as any)?.title !== "Member Exists") {
+              console.warn("Mailchimp error:", (err as any)?.detail ?? mcRes.status);
+            }
+          }
+        } catch (mcErr) {
+          console.warn("Mailchimp request failed:", mcErr);
+        }
+      }
+
+      res.json({ ok: true });
+    } catch (e: any) {
+      console.error("lead-magnet POST error:", e);
+      res.status(500).json({ error: "Server error" });
+    }
+  });
+
+  app.get("/api/lead-magnet/download", (req, res) => {
+    // Serve from attached_assets at project root
+    const pdfPath = path.resolve(process.cwd(), "attached_assets", "opa-trading-guide.pdf");
+    if (!fs.existsSync(pdfPath)) {
+      return res.status(404).json({ error: "File not found" });
+    }
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'attachment; filename="OPA-Beginners-Guide-to-Day-Trading.pdf"');
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    fs.createReadStream(pdfPath).pipe(res);
   });
 
   // ===== ADMIN =====
