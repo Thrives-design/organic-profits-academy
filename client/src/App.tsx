@@ -39,7 +39,7 @@ import { LeadMagnetPopup } from "@/components/LeadMagnetPopup";
 const PAGE_META: Record<string, { title: string; description: string }> = {
   "/":               { title: "",                       description: "A premium trading academy teaching crypto and forex trading. Live sessions, recorded webinars, and a private community — $600/month." },
   "/academy":        { title: "The Academy",            description: "Master crypto and forex trading with our structured curriculum, live sessions, and recorded webinar library." },
-  "/pricing":        { title: "Pricing",                description: "$600/month. All three markets. Live sessions, 40+ webinars, private Telegram house. Cancel anytime." },
+  "/pricing":        { title: "Pricing",                description: "$600/month. All three markets. Live sessions, recorded webinars for study, private Telegram house. Cancel anytime." },
   "/checkout":       { title: "Checkout",               description: "Join Organic Profits Academy for $600/month. Cancel anytime." },
   "/login":          { title: "Log in",                 description: "Log in to your Organic Profits Academy account." },
   "/signup":         { title: "Create your account",    description: "Create your Organic Profits Academy account and start trading smarter." },

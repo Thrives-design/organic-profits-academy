@@ -200,7 +200,7 @@ export default function Checkout() {
                 </div>
                 <div className="hairline my-5" />
                 <ul className="space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> 40+ webinars included</li>
+                  <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> Recorded webinars for study</li>
                   <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> Live desk access</li>
                   <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> Private Telegram house</li>
                   <li className="flex items-start gap-2"><Check size={12} className="mt-0.5 text-primary" /> Cancel anytime</li>
