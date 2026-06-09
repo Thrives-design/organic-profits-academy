@@ -18,7 +18,7 @@ export const PLANS = [
 ];
 
 const INCLUDES = [
-  "40+ on-demand webinars (crypto, forex, options)",
+  "Recorded webinars across crypto & forex — study anytime",
   "New webinars added every week",
   "Live desk sessions with Byron",
   "11-channel private Telegram house",

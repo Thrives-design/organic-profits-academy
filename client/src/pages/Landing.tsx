@@ -34,12 +34,6 @@ const MARKETS = [
     name: "Forex",
     desc: "London and New York sessions, macro flows, and smart-money concepts on the major pairs.",
   },
-  {
-    n: "03",
-    key: "options",
-    name: "Options",
-    desc: "0DTE spreads to LEAPS. Greeks, volatility, and premium selling with defined risk.",
-  },
 ];
 
 const INSIDE = [
@@ -124,7 +118,7 @@ const FAQ = [
   },
   {
     q: "What markets does the academy cover?",
-    a: "Crypto (BTC, ETH, majors), Forex (USD/JPY, EUR/USD, and more), and Options (0DTE through LEAPS). One membership, three complete tracks.",
+    a: "Crypto (BTC, ETH, majors) and Forex (USD/JPY, EUR/USD, and more). One membership, two complete tracks.",
   },
   {
     q: "How does the Telegram community work?",
@@ -200,7 +194,7 @@ export default function Landing() {
               </p>
               <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
                 Join a private trading academy led by Byron — a full-time trader with years
-                of experience in crypto, forex, and options. Get live desk access, 40+
+                of experience in crypto and forex. Get live desk access,
                 on-demand webinars, and a tight-knit Telegram community for one flat rate.
               </p>
 
@@ -253,8 +247,6 @@ export default function Landing() {
             <span>Crypto Trading</span>
             <span className="text-[hsl(var(--accent)/0.5)]">—</span>
             <span>Forex</span>
-            <span className="text-[hsl(var(--accent)/0.5)]">—</span>
-            <span>Options</span>
           </div>
         </div>
       </section>
@@ -337,16 +329,16 @@ export default function Landing() {
           <Reveal>
             <div className="lg:grid lg:grid-cols-12 lg:gap-12 mb-14">
               <div className="lg:col-span-4">
-                <p className="eyebrow mb-5">02 — The 3 Markets</p>
+                <p className="eyebrow mb-5">02 — The 2 Markets</p>
               </div>
               <div className="lg:col-span-8">
                 <h2 className="display-xl serif">
-                  Three markets.<br />
+                  Two markets.<br />
                   <span className="italic">One standard.</span>
                 </h2>
                 <p className="mt-5 max-w-md text-muted-foreground text-[15px] leading-relaxed">
                   Each track is a complete curriculum — first principles through
-                  advanced, desk-grade tactics. One membership covers all three.
+                  advanced, desk-grade tactics. One membership covers both.
                 </p>
               </div>
             </div>
@@ -623,7 +615,7 @@ export default function Landing() {
               { h: "aspect-[4/3]", label: "EUR/USD Short" },
               { h: "aspect-[3/4]", label: "Funded Challenge Pass" },
               { h: "aspect-square", label: "Crypto Scalp" },
-              { h: "aspect-[4/5]", label: "Options Premium" },
+              { h: "aspect-[4/5]", label: "Crypto Swing" },
               { h: "aspect-[3/4]", label: "Weekly P&L" },
               { h: "aspect-square", label: "Member Win" },
             ].map((item, i) => (

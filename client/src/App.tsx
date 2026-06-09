@@ -36,8 +36,8 @@ import { CartProvider } from "@/context/CartContext";
 // Per-route document title + meta description.
 // Centralized here so we don't have to touch every page component.
 const PAGE_META: Record<string, { title: string; description: string }> = {
-  "/":               { title: "",                       description: "A premium trading academy teaching crypto, forex, and options. Live sessions, 40+ webinars, and a private community — $600/month." },
-  "/academy":        { title: "The Academy",            description: "Master crypto, forex, and options trading with our structured curriculum, live webinars, and on-demand video library." },
+  "/":               { title: "",                       description: "A premium trading academy teaching crypto and forex trading. Live sessions, recorded webinars, and a private community — $600/month." },
+  "/academy":        { title: "The Academy",            description: "Master crypto and forex trading with our structured curriculum, live sessions, and recorded webinar library." },
   "/pricing":        { title: "Pricing",                description: "$600/month. All three markets. Live sessions, 40+ webinars, private Telegram house. Cancel anytime." },
   "/checkout":       { title: "Checkout",               description: "Join Organic Profits Academy for $600/month. Cancel anytime." },
   "/login":          { title: "Log in",                 description: "Log in to your Organic Profits Academy account." },
@@ -45,7 +45,7 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
   "/forgot-password":{ title: "Forgot password",        description: "Reset your Organic Profits Academy password." },
   "/reset-password": { title: "Reset password",         description: "Choose a new password for your Organic Profits Academy account." },
   "/dashboard":      { title: "Dashboard",              description: "Your Organic Profits Academy dashboard." },
-  "/library":        { title: "Video Library",          description: "On-demand trading lessons across crypto, forex, and options." },
+  "/library":        { title: "Video Library",          description: "On-demand trading lessons across crypto and forex." },
   "/webinars":       { title: "Live Webinars",          description: "Weekly live trading sessions with our coaches." },
   "/community":      { title: "Community",              description: "Connect with fellow traders in our private community." },
   "/shop":           { title: "The Collection",         description: "Branded apparel and gear for Organic Profits Academy members." },
@@ -56,7 +56,7 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
 };
 
 const DEFAULT_TITLE = "Organic Profits Academy — Grow your trading. Cultivate real profits.";
-const DEFAULT_DESC  = "A premium trading academy teaching crypto, forex, and options. Lifetime access, live webinars, on-demand library, and private community.";
+const DEFAULT_DESC  = "A premium trading academy teaching crypto and forex. Live sessions, recorded webinars, and private community.";
 
 function matchMeta(path: string) {
   // exact match first
