@@ -32,16 +32,36 @@ const INCLUDES = [
 
 const WHY = [
   {
-    q: "Why $600/month?",
-    a: "Most traders spend more on subscriptions, courses, and tools that never pay off. $600/month gets you everything — live sessions, the full webinar library, a real community, and direct mentor access — in one place. That's the edge serious traders pay for.",
+    q: "What exactly am I getting for $600/month?",
+    a: "Daily live market analysis from Byron, a full recorded webinar library, access to the private 11-channel Telegram house, direct line to Byron, trade ideas, and a community of serious traders. No fluff, no upsells — everything is included.",
   },
   {
-    q: "What happens after I sign up?",
-    a: "You get immediate access to your member dashboard, the full video library, and a direct Telegram invite to the private house. You're in the community within minutes.",
+    q: "How is OPA different from other trading academies?",
+    a: "Most academies sell you a course and disappear. OPA is active every day — Byron is in the markets, posting analysis, and accessible to members. You're learning from someone who trades live, not someone who used to trade.",
   },
   {
-    q: "Is there a commitment?",
-    a: "None. Cancel before your next billing date and you won't be charged again. But most members stay — because the community is where the real growth happens.",
+    q: "What results have members seen?",
+    a: "Members have passed $100k funded account challenges, turned small accounts into consistent income, and gone from zero experience to trading live. Results depend on your commitment — but the proof is in the community.",
+  },
+  {
+    q: "Is $600/month worth it if I'm just starting out?",
+    a: "If you're serious about trading as an income source, the cost of doing it wrong is far higher. One properly managed funded account pays for months of membership.",
+  },
+  {
+    q: "How quickly can I expect to see results?",
+    a: "Members who apply the methodology consistently typically see real progress within 60–90 days. Byron will tell you straight — there are no shortcuts, but the process works.",
+  },
+  {
+    q: "What's the cancellation policy?",
+    a: "Cancel anytime before your next billing date — no contracts, no penalties. There's also a 7-day money-back guarantee if you're not satisfied.",
+  },
+  {
+    q: "Do I need a large trading account to join?",
+    a: "No. OPA teaches you to build toward funded accounts — you don't need capital upfront. Several members started with demo accounts and now trade $100k+ funded.",
+  },
+  {
+    q: "How do I access everything after I join?",
+    a: "Immediately. You'll get login credentials for the member portal and Telegram access within minutes of joining.",
   },
 ];
 
@@ -119,9 +139,9 @@ export default function Pricing() {
       <section className="py-20 lg:py-24 bg-[hsl(var(--brand-silver-cream))]" data-testid="section-why">
         <div className="mx-auto max-w-3xl px-6 lg:px-10">
           <Reveal>
-            <p className="eyebrow mb-6">The honest answers</p>
+            <p className="eyebrow mb-6">FAQ</p>
             <h2 className="display-xl serif mb-14">
-              Before you <span className="italic">decide.</span>
+              Common <span className="italic">questions.</span>
             </h2>
           </Reveal>
 
